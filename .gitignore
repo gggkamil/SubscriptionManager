@@ -12,6 +12,8 @@ out/
 *.cache
 *.pdb
 *.mdb
+.cache/
+**/.cache/
 
 # Rider / VS Code
 .vscode/

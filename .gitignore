@@ -1,0 +1,48 @@
+# Visual Studio / .NET
+bin/
+obj/
+out/
+*.exe
+*.dll
+*.log
+*.vspscc
+*.vssscc
+*.user
+*.suo
+*.cache
+*.pdb
+*.mdb
+
+# Rider / VS Code
+.vscode/
+.idea/
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+
+# Entity Framework
+Migrations/
+
+# Node / React
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnp.*
+.pnp.js
+
+# Logs
+*.log
+
+# Environment and secrets
+.env
+.env.*
+appsettings.Development.json
+secrets.json
+
+# Azure
+.azure/

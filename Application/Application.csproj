@@ -1,9 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\Domain\Domain.csproj" />
-    <ProjectReference Include="..\Persistence\Persistence.csproj" />
-  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="13.0.0" />
@@ -16,7 +13,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../Domain/Domain.csproj" />
     <ProjectReference Include="../Persistence/Persistence.csproj" />
   </ItemGroup>
 </Project>

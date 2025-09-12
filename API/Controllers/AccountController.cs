@@ -1,10 +1,11 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
+using API.DTOs;
+using API.Services;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
@@ -14,60 +15,69 @@ public class AccountController : ControllerBase
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
-    private readonly IConfiguration _config;
+    private readonly TokenService _tokenService;
 
     public AccountController(UserManager<AppUser> userManager,
-        SignInManager<AppUser> signInManager, IConfiguration config)
+        SignInManager<AppUser> signInManager, TokenService tokenService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
-        _config = config;
+        _tokenService = tokenService;
     }
 
+    [AllowAnonymous]
     [HttpPost("register")]
-    public async Task<ActionResult> Register([FromBody] RegisterDto dto)
+    public async Task<ActionResult<UserDto>> Register(RegisterDto dto)
     {
-        var user = new AppUser { UserName = dto.Email, Email = dto.Email, FullName = dto.FullName };
+        if (await _userManager.Users.AnyAsync(x => x.Email == dto.Email))
+            return BadRequest("Email is taken");
+
+        var user = new AppUser
+        {
+            UserName = dto.Email,  
+            Email = dto.Email,
+            FullName = dto.FullName
+        };
 
         var result = await _userManager.CreateAsync(user, dto.Password);
 
         if (!result.Succeeded) return BadRequest(result.Errors);
 
-        return Ok(new { token = GenerateJwtToken(user) });
+        return CreateUserObject(user);
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
-    public async Task<ActionResult> Login([FromBody] LoginDto dto)
+    public async Task<ActionResult<UserDto>> Login(LoginDto dto)
     {
         var user = await _userManager.FindByEmailAsync(dto.Email);
         if (user == null) return Unauthorized();
 
         var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, false);
+
         if (!result.Succeeded) return Unauthorized();
 
-        return Ok(new { token = GenerateJwtToken(user) });
+        return CreateUserObject(user);
     }
 
-    private string GenerateJwtToken(AppUser user)
+    [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<UserDto>> GetCurrentUser()
     {
-        var claims = new List<Claim>
+        var email = User.FindFirstValue(ClaimTypes.Email);
+        var user = await _userManager.FindByEmailAsync(email!);
+
+        return CreateUserObject(user!);
+    }
+
+    private UserDto CreateUserObject(AppUser user)
+    {
+        return new UserDto
         {
-            new Claim(JwtRegisteredClaimNames.NameId, user.Id),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email)
+            Email = user.Email!,
+            FullName = user.FullName ?? "",
+            Username = user.UserName!,
+            Token = _tokenService.CreateToken(user)
         };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Key"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            claims: claims,
-            expires: DateTime.UtcNow.AddDays(7),
-            signingCredentials: creds
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
-
-public record RegisterDto(string Email, string FullName, string Password);
-public record LoginDto(string Email, string Password);

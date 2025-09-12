@@ -17,14 +17,17 @@ public class TokenService
 
     public string CreateToken(AppUser user)
     {
-        var claims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.NameId, user.Id),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
-        };
+   var claims = new List<Claim>
+{
+    new Claim(JwtRegisteredClaimNames.NameId, user.Id ?? string.Empty),
+    new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
+    new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName ?? string.Empty)
+};
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Key"]));
+var key = new SymmetricSecurityKey(
+    Encoding.UTF8.GetBytes(_config["JWT:Key"] ?? "fallback_secret")
+);
+
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(

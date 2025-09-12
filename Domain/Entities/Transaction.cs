@@ -5,12 +5,15 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-  public class Transaction
+public class Transaction
 {
     public Guid Id { get; set; }
-    public Guid UserId { get; set; }
+    public string AppUserId { get; set; } = null!;
+    public AppUser AppUser { get; set; } = null!;
+    
     public DateTime Date { get; set; }
     public decimal Amount { get; set; }
     public string Merchant { get; set; } = null!;
 }
+
 }

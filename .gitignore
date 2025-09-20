@@ -14,7 +14,14 @@ out/
 *.mdb
 .cache/
 **/.cache/
-
+*.db
+*.db-shm
+*.db-wal
+*.mdf
+*.ldf
+*.v2
+*.vsidx
+*.bin
 # Rider / VS Code
 .vscode/
 .idea/
@@ -48,3 +55,8 @@ secrets.json
 
 # Azure
 .azure/
+
+# Visual Studio local configs
+*.backup.json
+DocumentLayout.json
+applicationhost.config

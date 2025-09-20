@@ -13,7 +13,7 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<Notification> Notifications { get; set; }
 
-    // Dodaj tę metodę ↓
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -26,7 +26,7 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
         builder.Entity<Subscription>()
         .Property(s => s.Amount)
-        .HasPrecision(18, 2); // 18 digits total, 2 after decimal
+        .HasPrecision(18, 2); 
 
         builder.Entity<Transaction>()
         .Property(t => t.Amount)

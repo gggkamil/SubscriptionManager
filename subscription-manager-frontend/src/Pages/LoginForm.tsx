@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 
 import { Formik, Form, Field } from "formik";
 import { Button, TextField } from "@mui/material";
-import { useStore } from "../stores/Store";
+import { useStore } from "../stores/store";
 
 export default observer(function LoginForm() {
   const { userStore } = useStore();

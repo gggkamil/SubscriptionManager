@@ -7,6 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using API.Services;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Logging;
+IdentityModelEventSource.ShowPII = true;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -26,7 +30,10 @@ builder.Services.AddIdentityCore<AppUser>(opt =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddSignInManager<SignInManager<AppUser>>();
 // JWT Authentication
-var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]));
+var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]!));
+
+
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opt =>
@@ -36,9 +43,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = key,
             ValidateIssuer = false,
-            ValidateAudience = false
+            ValidateAudience = false,
+            ClockSkew = TimeSpan.Zero 
+        };
+
+      
+        opt.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = ctx =>
+            {
+                Console.WriteLine("JWT validation failed: " + ctx.Exception.Message);
+                return Task.CompletedTask;
+            }
         };
     });
+Console.WriteLine("JWT Key: " + builder.Configuration["JWT:Key"]);
 
 builder.Services.AddAuthorization();
 // MediatR
@@ -59,9 +78,27 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Headers.ContainsKey("Authorization"))
+    {
+        var auth = context.Request.Headers["Authorization"].ToString().Trim();
+        if (auth.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+        {
+            context.Request.Headers["Authorization"] = "Bearer " + auth.Substring(7).Trim();
+        }
+
+        Console.WriteLine($"AUTH HEADER (sanitized): [{context.Request.Headers["Authorization"]}]");
+    }
+    await next();
+});
+
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
 
 app.Run();

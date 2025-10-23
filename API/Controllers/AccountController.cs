@@ -1,4 +1,6 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using API.DTOs;
 using API.Services;
 using Domain.Entities;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers;
 
@@ -60,14 +63,42 @@ public class AccountController : ControllerBase
         return CreateUserObject(user);
     }
 
-    [Authorize]
-    [HttpGet]
-    public async Task<ActionResult<UserDto>> GetCurrentUser()
+    [HttpGet("me")]
+    public async Task<ActionResult<UserDto>> GetCurrentUser([FromServices] IConfiguration config)
     {
-        var email = User.FindFirstValue(ClaimTypes.Email);
-        var user = await _userManager.FindByEmailAsync(email!);
+        try
+        {
+            var authHeader = Request.Headers["Authorization"].ToString();
+            if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer "))
+                return Unauthorized("Missing or invalid Authorization header");
 
-        return CreateUserObject(user!);
+            var token = authHeader.Substring("Bearer ".Length).Trim();
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(config["JWT:Key"]!);
+
+            var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
+            }, out var validatedToken);
+
+            var email = principal.FindFirst(ClaimTypes.Email)?.Value;
+            if (email == null) return Unauthorized("No email claim in token");
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null) return Unauthorized("User not found");
+
+            return CreateUserObject(user);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Manual token validation failed: {ex.Message}");
+            return Unauthorized("Token validation failed: " + ex.Message);
+        }
     }
 
     private UserDto CreateUserObject(AppUser user)

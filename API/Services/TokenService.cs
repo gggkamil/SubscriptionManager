@@ -15,27 +15,27 @@ public class TokenService
         _config = config;
     }
 
-    public string CreateToken(AppUser user)
-    {
-   var claims = new List<Claim>
+   public string CreateToken(AppUser user)
 {
-    new Claim(JwtRegisteredClaimNames.NameId, user.Id ?? string.Empty),
-    new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-    new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName ?? string.Empty)
-};
+    var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id ?? string.Empty),
+        new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+        new Claim(ClaimTypes.Name, user.UserName ?? string.Empty)
+    };
 
-var key = new SymmetricSecurityKey(
-    Encoding.UTF8.GetBytes(_config["JWT:Key"] ?? "fallback_secret")
-);
+    var rawKey = _config["JWT:Key"];
+    Console.WriteLine($"[TokenService] JWT:Key used for signing: [{rawKey}]");
 
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(rawKey ?? "fallback_secret"));
+    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var token = new JwtSecurityToken(
-            claims: claims,
-            expires: DateTime.UtcNow.AddDays(7),
-            signingCredentials: creds
-        );
+    var token = new JwtSecurityToken(
+        claims: claims,
+        expires: DateTime.UtcNow.AddDays(7),
+        signingCredentials: creds
+    );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
+    return new JwtSecurityTokenHandler().WriteToken(token);
+}
 }

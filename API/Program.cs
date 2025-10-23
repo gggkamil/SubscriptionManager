@@ -68,7 +68,16 @@ builder.Services.AddScoped<TokenService>();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .WithOrigins("http://localhost:5173"); 
+    });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -94,6 +103,8 @@ app.Use(async (context, next) =>
     await next();
 });
 
+
+app.UseCors("AllowReactApp");
 
 app.UseAuthentication();
 app.UseAuthorization();

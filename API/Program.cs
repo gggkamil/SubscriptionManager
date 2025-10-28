@@ -1,26 +1,27 @@
 using System.Text;
-using Application.Subscriptions.Commands;
+using System.IdentityModel.Tokens.Jwt;
+using API.Services;
+using Application.Subscriptions;
 using Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
-using API.Services;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Logging;
+
 IdentityModelEventSource.ShowPII = true;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateSubscriptionCommand).Assembly));
 
 
 
 // DbContext
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 // Identity
 builder.Services.AddIdentityCore<AppUser>(opt =>
 {
@@ -29,9 +30,9 @@ builder.Services.AddIdentityCore<AppUser>(opt =>
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddSignInManager<SignInManager<AppUser>>();
+
 // JWT Authentication
 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]!));
-
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
@@ -44,10 +45,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = key,
             ValidateIssuer = false,
             ValidateAudience = false,
-            ClockSkew = TimeSpan.Zero 
+            ClockSkew = TimeSpan.Zero
         };
 
-      
         opt.Events = new JwtBearerEvents
         {
             OnAuthenticationFailed = ctx =>
@@ -57,17 +57,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             }
         };
     });
-Console.WriteLine("JWT Key: " + builder.Configuration["JWT:Key"]);
 
-builder.Services.AddAuthorization();
-// MediatR
+// MediatR (Register entire Application assembly)
 builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(Application.Subscriptions.Commands.CreateSubscriptionCommand).Assembly));
-//Jtw Token Service
+    cfg.RegisterServicesFromAssembly(typeof(List.Handler).Assembly));
+
+// Token service
 builder.Services.AddScoped<TokenService>();
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+
+// CORS for React frontend
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
@@ -75,12 +78,14 @@ builder.Services.AddCors(options =>
         policy
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .WithOrigins("http://localhost:5173"); 
+            .WithOrigins("http://localhost:5173");
     });
 });
+
+// -------------------- App Pipeline --------------------
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -88,6 +93,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Log sanitized auth headers (optional, can remove later)
 app.Use(async (context, next) =>
 {
     if (context.Request.Headers.ContainsKey("Authorization"))
@@ -103,13 +109,10 @@ app.Use(async (context, next) =>
     await next();
 });
 
-
 app.UseCors("AllowReactApp");
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
 
 app.Run();

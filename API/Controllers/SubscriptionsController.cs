@@ -1,33 +1,43 @@
-using Application.Subscriptions.Commands;
-using Application.Subscriptions.DTOs;
-using Application.Subscriptions.Queries;
+using Application.Subscriptions;
+using Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class SubscriptionsController : ControllerBase
+namespace API.Controllers
 {
-    private readonly IMediator _mediator;
-
-    public SubscriptionsController(IMediator mediator)
+    [Authorize]
+    public class SubscriptionsController : BaseApiController
     {
-        _mediator = mediator;
-    }
+        [HttpGet]
+        public async Task<IActionResult> GetSubscriptions()
+        {
+            return HandleResult(await Mediator.Send(new List.Query()));
+        }
 
-    [HttpGet]
-    public async Task<ActionResult<List<SubscriptionDto>>> GetSubscriptions()
-    {
-        var result = await _mediator.Send(new GetSubscriptionsQuery());
-        return Ok(result);
-    }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetSubscription(Guid id)
+        {
+            return HandleResult(await Mediator.Send(new Details.Query { Id = id }));
+        }
 
-    [HttpPost]
-    public async Task<ActionResult<Guid>> CreateSubscription([FromBody] CreateSubscriptionCommand command)
-    {
-        var id = await _mediator.Send(command);
-        return Ok(id);
+        [HttpPost]
+        public async Task<IActionResult> CreateSubscription(Subscription subscription)
+        {
+            return HandleResult(await Mediator.Send(new Create.Command { Subscription = subscription }));
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditSubscription(Guid id, Subscription subscription)
+        {
+            subscription.Id = id;
+            return HandleResult(await Mediator.Send(new Edit.Command { Subscription = subscription }));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteSubscription(Guid id)
+        {
+            return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
+        }
     }
 }

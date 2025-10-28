@@ -1,0 +1,19 @@
+.whiteTextField input {
+  color: white;
+}
+
+.whiteTextField label {
+  color: white;
+}
+
+.whiteTextField .MuiInput-underline:before {
+  border-bottom-color: white;
+}
+
+.whiteTextField .MuiInput-underline:hover:before {
+  border-bottom-color: white;
+}
+
+.whiteTextField .MuiInput-underline:after {
+  border-bottom-color: white;
+}

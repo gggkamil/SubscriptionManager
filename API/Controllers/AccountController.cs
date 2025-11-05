@@ -104,6 +104,7 @@ public class AccountController : ControllerBase
     {
         return new UserDto
         {
+            Id = user.Id,
             Email = user.Email!,
             FullName = user.FullName ?? "",
             Username = user.UserName!,

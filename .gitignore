@@ -60,3 +60,4 @@ secrets.json
 *.backup.json
 DocumentLayout.json
 applicationhost.config
+API/.config/dotnet-tools.json

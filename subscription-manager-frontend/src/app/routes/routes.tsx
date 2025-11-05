@@ -3,6 +3,7 @@ import SubscriptionDashboard from "../../Features/subscriptions/dashboard/Subscr
 import SubscriptionDetails from "../../Features/subscriptions/dashboard/details/SubscriptionDetails";
 import LoginForm from "../../Pages/LoginForm";
 import App from "../../App";
+import SubscriptionForm from "../../Features/subscriptions/dashboard/form/SubscriptionForm";
 
 export const router = createBrowserRouter([
  {
@@ -13,6 +14,8 @@ export const router = createBrowserRouter([
       { path: "login", element: <LoginForm /> },
       { path: "subscriptions", element: <SubscriptionDashboard /> },
       { path: "subscriptions/:id", element: <SubscriptionDetails /> },
+      { path: "createSubscription", element: <SubscriptionForm /> },
+
       { path: "*", element: <Navigate to="/subscriptions" /> },
     ],
   },

@@ -9,7 +9,7 @@ import { useStore } from "../../../../app/stores/store";
 export default observer(function SubscriptionForm() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { subscriptionStore } = useStore();
+  const { subscriptionStore, userStore } = useStore();
   const { loadSubscriptions, subscriptions } = subscriptionStore;
 
   const subscription = subscriptions.find(s => s.id === id);
@@ -18,12 +18,22 @@ export default observer(function SubscriptionForm() {
     if (!subscriptions.length) loadSubscriptions();
   }, [loadSubscriptions, subscriptions.length]);
 
+  useEffect(() => {
+    if (userStore.token && !userStore.user) {
+      userStore.getCurrentUser();
+    }
+  }, [userStore]);
+
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
-    amount: Yup.number().required("Amount is required"),
+    amount: Yup.number().required("Amount is required").min(0, "Amount must be positive"),
     frequency: Yup.string().required("Frequency is required"),
-    nextPaymentDate: Yup.date().required("Next Payment Date is required")
+    nextPaymentDate: Yup.date().required("Next Payment Date is required"),
   });
+
+  if (!userStore.user) {
+    return <Typography>Loading user info...</Typography>;
+  }
 
   return (
     <Box sx={{ maxWidth: 500, mx: "auto", mt: 4 }}>
@@ -38,12 +48,34 @@ export default observer(function SubscriptionForm() {
           name: subscription?.name || "",
           amount: subscription?.amount || 0,
           frequency: subscription?.frequency || "",
-          nextPaymentDate: subscription?.nextPaymentDate || ""
+          nextPaymentDate: subscription?.nextPaymentDate
+            ? subscription.nextPaymentDate.substring(0, 10)
+            : "",
         }}
-        onSubmit={values => {
-          console.log("Submitted:", values);
-          navigate("/subscriptions");
-        }}
+        onSubmit={async (values, { resetForm }) => {
+  // payload matches Subscription entity exactly
+  const payload = {
+    name: values.name,
+    amount: values.amount,
+    frequency: values.frequency,
+    nextPaymentDate: new Date(values.nextPaymentDate).toISOString(),
+  };
+
+  console.log("📤 Sending payload:", payload);
+
+  try {
+    if (id) {
+      await subscriptionStore.updateSubscription(payload as any);
+    } else {
+      await subscriptionStore.createSubscription(payload as any);
+    }
+    resetForm();
+    navigate("/subscriptions");
+  } catch (error) {
+    console.error("❌ Failed to save subscription:", error);
+  }
+}}
+
       >
         {({ handleChange, handleSubmit, values, errors, touched }) => (
           <Form onSubmit={handleSubmit}>
@@ -83,7 +115,7 @@ export default observer(function SubscriptionForm() {
               label="Next Payment Date"
               name="nextPaymentDate"
               type="date"
-              value={values.nextPaymentDate.toString().substring(0, 10)}
+              value={values.nextPaymentDate}
               onChange={handleChange}
               InputLabelProps={{ shrink: true }}
               error={touched.nextPaymentDate && !!errors.nextPaymentDate}

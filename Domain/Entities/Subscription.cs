@@ -8,8 +8,8 @@ namespace Domain.Entities
 public class Subscription
 {
     public Guid Id { get; set; }
-    public string AppUserId { get; set; } = null!;  
-    public AppUser AppUser { get; set; } = null!;
+    public string? AppUserId { get; set; } = null!;  
+    public AppUser? AppUser { get; set; } = null!;
     
     public string Name { get; set; } = null!;
     public decimal Amount { get; set; }

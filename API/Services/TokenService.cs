@@ -25,7 +25,6 @@ public class TokenService
     };
 
     var rawKey = _config["JWT:Key"];
-    Console.WriteLine($"[TokenService] JWT:Key used for signing: [{rawKey}]");
 
     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(rawKey ?? "fallback_secret"));
     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using API.Services;
 using Application.Subscriptions;
@@ -52,7 +52,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             OnAuthenticationFailed = ctx =>
             {
-                Console.WriteLine("JWT validation failed: " + ctx.Exception.Message);
+               
                 return Task.CompletedTask;
             }
         };
@@ -93,7 +93,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Log sanitized auth headers (optional, can remove later)
 app.Use(async (context, next) =>
 {
     if (context.Request.Headers.ContainsKey("Authorization"))
@@ -103,8 +102,6 @@ app.Use(async (context, next) =>
         {
             context.Request.Headers["Authorization"] = "Bearer " + auth.Substring(7).Trim();
         }
-
-        Console.WriteLine($"AUTH HEADER (sanitized): [{context.Request.Headers["Authorization"]}]");
     }
     await next();
 });

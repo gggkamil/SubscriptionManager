@@ -96,7 +96,6 @@ public class AccountController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Manual token validation failed: {ex.Message}");
             return Unauthorized("Token validation failed: " + ex.Message);
         }
     }

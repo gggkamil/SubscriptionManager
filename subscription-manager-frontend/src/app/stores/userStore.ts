@@ -1,5 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
+import { router } from "../routes/routes";
 
 export default class UserStore {
   user: any = null;
@@ -20,6 +21,7 @@ export default class UserStore {
       this.token = user.token;
       window.localStorage.setItem("jwt", user.token);
     });
+    router.navigate("/subscriptions"); // 👈 redirect to dashboard
   };
 
   register = async (values: { displayName: string; username: string; email: string; password: string }) => {
@@ -29,18 +31,20 @@ export default class UserStore {
       this.token = user.token;
       window.localStorage.setItem("jwt", user.token);
     });
+    router.navigate("/subscriptions"); // 👈 redirect to dashboard
   };
 
   logout = () => {
     this.user = null;
     this.token = null;
     window.localStorage.removeItem("jwt");
+    router.navigate("/"); // 👈 redirect to login/home
   };
 
   getCurrentUser = async () => {
     try {
       const user = await agent.Account.current();
-      runInAction(() => this.user = user);
+      runInAction(() => (this.user = user));
     } catch (error) {
       console.error(error);
     }

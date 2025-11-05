@@ -1,33 +1,37 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { useStore } from "./stores/store";
-import LoginForm from "./Pages/LoginForm";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useStore } from "./app/stores/store";
+import { CircularProgress, Box } from "@mui/material";
+import TopBar from "./app/layout/TopBar";
 
 function App() {
   const { userStore } = useStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userStore.token) {
-      userStore.getCurrentUser();
+      userStore.getCurrentUser().then(() => navigate("/subscriptions"));
+    } else {
+      navigate("/login");
     }
-  }, [userStore]);
+  }, [userStore, navigate]);
 
-  if (!userStore.isLoggedIn) {
-    return <LoginForm />;
+  if (userStore.token && !userStore.user) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
-    <div className="p-8 text-center">
-      <h1 className="text-2xl font-semibold">
-        Witaj, {userStore.user?.email || "User"}!
-      </h1>
-      <button
-        onClick={userStore.logout}
-        className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
-      >
-        Wyloguj
-      </button>
-    </div>
+    <>
+      <TopBar /> 
+      <Box sx={{ p: 3 }}>
+        <Outlet />
+      </Box>
+    </>
   );
 }
 

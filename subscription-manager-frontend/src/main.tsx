@@ -1,13 +1,14 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import "./index.css";
-import App from "./App";
-import { store, StoreContext } from "./stores/store";
+import ReactDOM from "react-dom/client";
+import { RouterProvider } from "react-router-dom";
+import { store, StoreContext } from "./app/stores/store";
+import { router } from "./app/routes/routes";
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <StoreContext.Provider value={store}>
-      <App />
-    </StoreContext.Provider>
-  </StrictMode>
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
+
+root.render(
+  <StoreContext.Provider value={store}>
+    <RouterProvider router={router} />
+  </StoreContext.Provider>
 );

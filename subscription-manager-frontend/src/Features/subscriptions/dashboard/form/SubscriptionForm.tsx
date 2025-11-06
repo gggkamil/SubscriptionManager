@@ -12,7 +12,9 @@ export default observer(function SubscriptionForm() {
   const { subscriptionStore, userStore } = useStore();
   const { loadSubscriptions, subscriptions } = subscriptionStore;
 
-  const subscription = subscriptions.find(s => s.id === id);
+
+  const subscription = subscriptions.find((s) => s.id === id);
+  const isEditMode = Boolean(id);
 
   useEffect(() => {
     if (!subscriptions.length) loadSubscriptions();
@@ -26,7 +28,9 @@ export default observer(function SubscriptionForm() {
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
-    amount: Yup.number().required("Amount is required").min(0, "Amount must be positive"),
+    amount: Yup.number()
+      .required("Amount is required")
+      .min(0, "Amount must be positive"),
     frequency: Yup.string().required("Frequency is required"),
     nextPaymentDate: Yup.date().required("Next Payment Date is required"),
   });
@@ -38,7 +42,7 @@ export default observer(function SubscriptionForm() {
   return (
     <Box sx={{ maxWidth: 500, mx: "auto", mt: 4 }}>
       <Typography variant="h5" mb={3}>
-        {id ? "Edit Subscription" : "Create Subscription"}
+        {isEditMode ? "Edit Subscription" : "Create Subscription"}
       </Typography>
 
       <Formik
@@ -53,29 +57,27 @@ export default observer(function SubscriptionForm() {
             : "",
         }}
         onSubmit={async (values, { resetForm }) => {
-  // payload matches Subscription entity exactly
-  const payload = {
-    name: values.name,
-    amount: values.amount,
-    frequency: values.frequency,
-    nextPaymentDate: new Date(values.nextPaymentDate).toISOString(),
-  };
+          const payload = {
+            id: subscription?.id, 
+            name: values.name,
+            amount: values.amount,
+            frequency: values.frequency,
+            nextPaymentDate: new Date(values.nextPaymentDate).toISOString(),
+          };
 
-  console.log("📤 Sending payload:", payload);
+          try {
+            if (isEditMode) {
+              await subscriptionStore.updateSubscription(payload as any);
+            } else {
+              await subscriptionStore.createSubscription(payload as any);
+            }
 
-  try {
-    if (id) {
-      await subscriptionStore.updateSubscription(payload as any);
-    } else {
-      await subscriptionStore.createSubscription(payload as any);
-    }
-    resetForm();
-    navigate("/subscriptions");
-  } catch (error) {
-    console.error("❌ Failed to save subscription:", error);
-  }
-}}
-
+            resetForm();
+            navigate("/subscriptions");
+          } catch (error) {
+            console.error("Failed to save subscription:", error);
+          }
+        }}
       >
         {({ handleChange, handleSubmit, values, errors, touched }) => (
           <Form onSubmit={handleSubmit}>
@@ -89,6 +91,7 @@ export default observer(function SubscriptionForm() {
               helperText={touched.name && errors.name}
               margin="normal"
             />
+
             <TextField
               fullWidth
               label="Amount"
@@ -100,6 +103,7 @@ export default observer(function SubscriptionForm() {
               helperText={touched.amount && errors.amount}
               margin="normal"
             />
+
             <TextField
               fullWidth
               label="Frequency"
@@ -110,6 +114,7 @@ export default observer(function SubscriptionForm() {
               helperText={touched.frequency && errors.frequency}
               margin="normal"
             />
+
             <TextField
               fullWidth
               label="Next Payment Date"
@@ -122,8 +127,16 @@ export default observer(function SubscriptionForm() {
               helperText={touched.nextPaymentDate && errors.nextPaymentDate}
               margin="normal"
             />
-            <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
-              Save
+
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ mt: 2 }}
+              disabled={subscriptionStore.submitting}
+            >
+              {isEditMode ? "Update" : "Save"}
             </Button>
           </Form>
         )}

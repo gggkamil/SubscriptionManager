@@ -21,7 +21,7 @@ export default class UserStore {
       this.token = user.token;
       window.localStorage.setItem("jwt", user.token);
     });
-    router.navigate("/subscriptions"); // 👈 redirect to dashboard
+    router.navigate("/subscriptions");
   };
 
   register = async (values: { displayName: string; username: string; email: string; password: string }) => {
@@ -31,14 +31,14 @@ export default class UserStore {
       this.token = user.token;
       window.localStorage.setItem("jwt", user.token);
     });
-    router.navigate("/subscriptions"); // 👈 redirect to dashboard
+    router.navigate("/subscriptions"); 
   };
 
   logout = () => {
     this.user = null;
     this.token = null;
     window.localStorage.removeItem("jwt");
-    router.navigate("/"); // 👈 redirect to login/home
+    router.navigate("/"); 
   };
 
   getCurrentUser = async () => {
@@ -47,6 +47,7 @@ export default class UserStore {
       runInAction(() => (this.user = user));
     } catch (error) {
       console.error(error);
+      this.logout(); 
     }
   };
 }

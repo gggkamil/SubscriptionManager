@@ -29,7 +29,7 @@ export default observer(function TopBar() {
             <Button
               color="inherit"
               component={Link}
-              to="/createSubscription"
+              to="/subscriptions/create"
               sx={{ mr: 2 }}
             >
               Add Subscription

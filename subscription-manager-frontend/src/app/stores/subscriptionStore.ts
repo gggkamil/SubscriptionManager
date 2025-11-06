@@ -1,20 +1,23 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import type { Subscription } from "../models/subscription";
+import { toast } from "react-toastify";
 
 export default class SubscriptionStore {
   subscriptions: Subscription[] = [];
   selectedSubscription: Subscription | undefined = undefined;
   loading = false;
   submitting = false;
-  loadingInitial = false; // 👈 add this
+  loadingInitial = false;
 
   constructor() {
     makeAutoObservable(this);
   }
-
+getSubscription = (id: string) => {
+  return this.subscriptions.find(s => s.id === id);
+};
   loadSubscriptions = async () => {
-    this.loadingInitial = true; // 👈 set this
+    this.loadingInitial = true;
     try {
       const result = await agent.Subscriptions.list();
       runInAction(() => {
@@ -24,24 +27,26 @@ export default class SubscriptionStore {
       console.error("Failed to load subscriptions:", error);
     } finally {
       runInAction(() => {
-        this.loadingInitial = false; // 👈 unset it
+        this.loadingInitial = false; 
       });
     }
   };
 
-  createSubscription = async (subscription: Subscription) => {
-    this.submitting = true;
-    try {
-      await agent.Subscriptions.create(subscription);
-      runInAction(() => {
-        this.subscriptions.push(subscription);
-      });
-    } catch (error) {
-      console.error("Failed to create subscription:", error);
-    } finally {
-      runInAction(() => (this.submitting = false));
-    }
-  };
+createSubscription = async (subscription: Subscription) => {
+  this.submitting = true;
+  try {
+    await agent.Subscriptions.create(subscription);
+    runInAction(() => {
+      this.subscriptions.push(subscription);
+    });
+    toast.success("Subscription created successfully!");
+  } catch (error) {
+    toast.error("Failed to create subscription");
+    console.error(error);
+  } finally {
+    runInAction(() => (this.submitting = false));
+  }
+};
 
   updateSubscription = async (subscription: Subscription) => {
     this.submitting = true;

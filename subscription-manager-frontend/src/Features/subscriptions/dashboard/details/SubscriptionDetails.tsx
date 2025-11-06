@@ -1,53 +1,50 @@
 import { observer } from "mobx-react-lite";
-import { useParams, Link } from "react-router-dom";
-import { useEffect } from "react";
-import { Box, Typography, Button, CircularProgress } from "@mui/material";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useStore } from "../../../../app/stores/store";
+import { Button, Typography, Box } from "@mui/material";
 
-export default observer(function SubscriptionDetails() {
-  const { id } = useParams<{ id: string }>();
+const SubscriptionDetails = observer(() => {
   const { subscriptionStore } = useStore();
-  const {
-    subscriptions,
-    selectedSubscription,
-    loadSubscriptions,
-    loading,
-  } = subscriptionStore;
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (subscriptions.length === 0) loadSubscriptions();
-  }, [loadSubscriptions, subscriptions.length]);
+  const subscription = subscriptionStore.getSubscription(id!);
 
-  const subscription =
-    selectedSubscription ?? subscriptions.find((x) => x.id === id);
+  if (!subscription) return <Typography>Loading...</Typography>;
 
-  if (loading || !subscription)
-    return (
-      <Box sx={{ textAlign: "center", mt: 5 }}>
-        <CircularProgress />
-      </Box>
-    );
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this subscription?")) {
+      await subscriptionStore.deleteSubscription(subscription.id);
+      navigate("/subscriptions");
+    }
+  };
 
   return (
-    <Box sx={{ mt: 5 }}>
-      <Typography variant="h5" gutterBottom>
-        {subscription.name}
-      </Typography>
-      <Typography>Amount: ${subscription.amount.toFixed(2)}</Typography>
+    <Box sx={{ p: 4 }}>
+      <Typography variant="h5">{subscription.name}</Typography>
+      <Typography>Amount: {subscription.amount}</Typography>
       <Typography>Frequency: {subscription.frequency}</Typography>
-      <Typography>
-        Next Payment:{" "}
-        {new Date(subscription.nextPaymentDate).toLocaleDateString()}
-      </Typography>
+      <Typography>Next payment: {subscription.nextPaymentDate}</Typography>
 
       <Button
         component={Link}
-        to={`/manageSubscription/${subscription.id}`}
-        sx={{ mt: 3 }}
+        to={`/subscriptions/edit/${subscription.id}`}
+        sx={{ mt: 3, mr: 2 }}
         variant="contained"
       >
         Edit
       </Button>
+
+      <Button
+        sx={{ mt: 3 }}
+        variant="outlined"
+        color="error"
+        onClick={handleDelete}
+      >
+        Delete
+      </Button>
     </Box>
   );
 });
+
+export default SubscriptionDetails;

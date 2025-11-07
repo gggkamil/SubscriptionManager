@@ -1,18 +1,67 @@
+import { observer } from "mobx-react-lite";
+import { useStore } from "../../../app/stores/store";
 import { Card, CardContent, Typography, Button, Stack } from "@mui/material";
+import { useState } from "react";
 
-export default function SubscriptionFilters() {
+const SubscriptionFilters = () => {
+  const { subscriptionStore } = useStore();
+  const [activeFilter, setActiveFilter] = useState("all");
+
+  const handleFilterChange = (filter: string) => {
+    setActiveFilter(filter);
+    switch (filter) {
+      case "active":
+        subscriptionStore.filterActive();
+        break;
+      case "expired":
+        subscriptionStore.filterExpired();
+        break;
+      default:
+        subscriptionStore.filterAll();
+        break;
+    }
+  };
+
   return (
-    <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
+    <Card
+      sx={{
+        borderRadius: 3,
+        boxShadow: 2,
+        mb: 3,
+        bgcolor: "background.paper",
+      }}
+    >
       <CardContent>
         <Typography variant="h6" gutterBottom>
           Filters
         </Typography>
-        <Stack spacing={2}>
-          <Button variant="outlined">All</Button>
-          <Button variant="outlined">Active</Button>
-          <Button variant="outlined">Expired</Button>
+
+        <Stack direction="row" spacing={2}>
+          <Button
+            variant={activeFilter === "all" ? "contained" : "outlined"}
+            color="primary"
+            onClick={() => handleFilterChange("all")}
+          >
+            All
+          </Button>
+          <Button
+            variant={activeFilter === "active" ? "contained" : "outlined"}
+            color="success"
+            onClick={() => handleFilterChange("active")}
+          >
+            Active
+          </Button>
+          <Button
+            variant={activeFilter === "expired" ? "contained" : "outlined"}
+            color="error"
+            onClick={() => handleFilterChange("expired")}
+          >
+            Expired
+          </Button>
         </Stack>
       </CardContent>
     </Card>
   );
-}
+};
+
+export default observer(SubscriptionFilters);

@@ -9,7 +9,7 @@ import SubscriptionFilters from "./SubscriptionFilters";
 
 export default observer(function SubscriptionDashboard() {
   const { subscriptionStore } = useStore();
-  const { loadSubscriptions, subscriptions, loadingInitial } = subscriptionStore;
+  const { loadSubscriptions, filteredSubscriptions, loadingInitial } = subscriptionStore;
 
   const [hasMore, setHasMore] = useState(false);
 
@@ -21,7 +21,7 @@ export default observer(function SubscriptionDashboard() {
     load();
   }, [loadSubscriptions]);
 
-  if (loadingInitial && subscriptions.length === 0) {
+  if (loadingInitial && filteredSubscriptions.length === 0) {
     return (
       <Grid container spacing={2} sx={{ mt: 2 }}>
         {[...Array(3)].map((_, i) => (
@@ -38,7 +38,7 @@ export default observer(function SubscriptionDashboard() {
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 8 }}>
           <InfiniteScroll
-            dataLength={subscriptions.length}
+            dataLength={filteredSubscriptions.length}
             next={loadSubscriptions}
             hasMore={hasMore}
             loader={

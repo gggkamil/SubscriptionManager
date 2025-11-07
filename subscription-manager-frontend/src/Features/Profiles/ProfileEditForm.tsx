@@ -29,7 +29,7 @@ const ProfileEditForm = ({ profile }: Props) => {
           bankAccountNumber: profile.bankAccountNumber ?? "",
         }}
         validationSchema={Yup.object({
-          fullName: Yup.string().required("Full name is required"),
+          fullName: Yup.string().required("Imię i nazwisko jest wymagane"),
         })}
         onSubmit={(values) =>
           updateProfile(profile.id, {
@@ -48,7 +48,7 @@ const ProfileEditForm = ({ profile }: Props) => {
           >
             <Stack spacing={3}>
               <TextField
-                label="Full name"
+                label="Imię i nazwisko"
                 name="fullName"
                 value={values.fullName}
                 onChange={handleChange}
@@ -64,7 +64,7 @@ const ProfileEditForm = ({ profile }: Props) => {
                 minRows={3}
               />
               <TextField
-                label="Bank account number"
+                label="Numer konta bankowego"
                 name="bankAccountNumber"
                 value={values.bankAccountNumber}
                 onChange={handleChange}
@@ -81,7 +81,7 @@ const ProfileEditForm = ({ profile }: Props) => {
                 }}
                 disabled={updatingProfile}
               >
-                {updatingProfile ? "Saving..." : "Save changes"}
+                {updatingProfile ? "Zapisywanie..." : "Zapisano zmiany"}
               </Button>
             </Stack>
           </Form>

@@ -27,7 +27,7 @@ namespace Application.Subscriptions
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                // Assign AppUserId from JWT
+             
                 var userId = _httpContext.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (userId == null) return Result<Unit>.Failure("No logged-in user found");
 

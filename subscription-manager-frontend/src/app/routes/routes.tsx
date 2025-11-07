@@ -6,7 +6,7 @@ import LoginForm from "../../Pages/LoginForm";
 import App from "../../App";
 import RequireAuth from "../layout/RequireAuth";
 
-// 👇 import the new ProfilePage
+
 import ProfilePage from "../../Features/Profiles/ProfilePage";
 
 export const router = createBrowserRouter([

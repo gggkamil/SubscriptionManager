@@ -1,4 +1,3 @@
-// Domain/Entities/AppUser.cs
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities;

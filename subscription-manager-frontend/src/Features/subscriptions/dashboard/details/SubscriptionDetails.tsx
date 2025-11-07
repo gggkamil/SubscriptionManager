@@ -32,7 +32,7 @@ const SubscriptionDetails = observer(() => {
         sx={{ mt: 3, mr: 2 }}
         variant="contained"
       >
-        Edit
+        Edytuj
       </Button>
 
       <Button
@@ -41,7 +41,7 @@ const SubscriptionDetails = observer(() => {
         color="error"
         onClick={handleDelete}
       >
-        Delete
+        Usuń
       </Button>
     </Box>
   );

@@ -4,7 +4,7 @@ import type { Profile } from "../models/profile";
 
 axios.defaults.baseURL = "https://localhost:7206/api";
 
-// Attach JWT token if present
+
 axios.interceptors.request.use(config => {
   const token = window.localStorage.getItem("jwt");
   if (token && config.headers)
@@ -21,7 +21,7 @@ const requests = {
   del: (url: string) => axios.delete(url).then(responseBody),
 };
 
-// ---- 👇 Add Subscriptions API integration ----
+
 const Subscriptions = {
   list: (): Promise<Subscription[]> => requests.get("/subscriptions"),
   details: (id: string): Promise<Subscription> => requests.get(`/subscriptions/${id}`),
@@ -31,7 +31,7 @@ const Subscriptions = {
   delete: (id: string) => requests.del(`/subscriptions/${id}`),
 };
 
-// ---- Existing Account endpoints ----
+
 const Account = {
   login: (credentials: { email: string; password: string }) =>
     requests.post("/account/login", credentials),
@@ -50,7 +50,7 @@ const Profiles = {
   update: (id: string, profile: Profile) =>
     requests.put(`/profiles/${id}`, profile),
 };
-// ---- Export unified API agent ----
+
 const agent = {
   Account,
   Subscriptions,

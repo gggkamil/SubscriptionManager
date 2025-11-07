@@ -35,7 +35,7 @@ const ProfileContent = ({ profile }: Props) => {
       <Box sx={{ p: 3 }}>
         {tab === 0 && (
           <Box>
-            <p><strong>Full name:</strong> {profile.fullName}</p>
+            <p><strong>Imię i nazwisko:</strong> {profile.fullName}</p>
             <p><strong>Email:</strong> {profile.email}</p>
             <p><strong>Bio:</strong> {profile.bio || "No bio yet."}</p>
           </Box>
@@ -43,12 +43,12 @@ const ProfileContent = ({ profile }: Props) => {
         {tab === 1 && <ProfileEditForm profile={profile} />}
         {tab === 2 && (
           <p style={{ color: "#777" }}>
-            Subscriptions tab (connect later to your Subscriptions list)
+            Zakładka subskrypcji (do podłączenia później do listy subscrypcji)
           </p>
         )}
         {tab === 3 && (
           <p style={{ color: "#777" }}>
-            Activity tab (future feature)
+            Zakładka aktywności w budowie
           </p>
         )}
       </Box>

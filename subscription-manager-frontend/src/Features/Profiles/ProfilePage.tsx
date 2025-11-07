@@ -17,7 +17,7 @@ const ProfilePage = () => {
     if (id) loadProfile(id);
   }, [id, loadProfile]);
 
-  if (loadingProfile) return <LoadingComponent content="Loading profile..." />;
+  if (loadingProfile) return <LoadingComponent content="Ładuje profile..." />;
 
   if (!profile)
     return (

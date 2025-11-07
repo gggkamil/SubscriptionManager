@@ -33,7 +33,7 @@ const ProfileHeader = ({ profile }: Props) => {
         <Divider sx={{ my: 2 }} />
 
         <Typography variant="body1" color="text.secondary">
-          {profile.bio || "This user hasn’t added a bio yet."}
+          {profile.bio || "..."}
         </Typography>
 
         {profile.bankAccountNumber && (
@@ -41,7 +41,7 @@ const ProfileHeader = ({ profile }: Props) => {
             variant="body2"
             sx={{ mt: 2, color: "text.secondary", fontStyle: "italic" }}
           >
-            Bank Account: {profile.bankAccountNumber}
+            Numer konta: {profile.bankAccountNumber}
           </Typography>
         )}
       </CardContent>

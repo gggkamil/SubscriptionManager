@@ -27,22 +27,22 @@ export default observer(function SubscriptionForm() {
   }, [userStore]);
 
   const validationSchema = Yup.object({
-    name: Yup.string().required("Name is required"),
+    name: Yup.string().required("Nazwa jest wymagana"),
     amount: Yup.number()
-      .required("Amount is required")
-      .min(0, "Amount must be positive"),
-    frequency: Yup.string().required("Frequency is required"),
-    nextPaymentDate: Yup.date().required("Next Payment Date is required"),
+      .required("Opłata jest wymagana")
+      .min(0, "Opłata musi być wyższa od 0"),
+    frequency: Yup.string().required("Opis planu jest wymagana"),
+    nextPaymentDate: Yup.date().required("Termin następnej opłaty jest wymagany"),
   });
 
   if (!userStore.user) {
-    return <Typography>Loading user info...</Typography>;
+    return <Typography>Ładuje dane użytkownika...</Typography>;
   }
 
   return (
     <Box sx={{ maxWidth: 500, mx: "auto", mt: 4 }}>
       <Typography variant="h5" mb={3}>
-        {isEditMode ? "Edit Subscription" : "Create Subscription"}
+        {isEditMode ? "Edytuj Subscrypcje" : "Utwórz Subscrypcje"}
       </Typography>
 
       <Formik
@@ -75,7 +75,7 @@ export default observer(function SubscriptionForm() {
             resetForm();
             navigate("/subscriptions");
           } catch (error) {
-            console.error("Failed to save subscription:", error);
+            console.error("Błąd podczas próby zapisu subscrypcji:", error);
           }
         }}
       >
@@ -83,7 +83,7 @@ export default observer(function SubscriptionForm() {
           <Form onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              label="Name"
+              label="Nazwa"
               name="name"
               value={values.name}
               onChange={handleChange}
@@ -94,7 +94,7 @@ export default observer(function SubscriptionForm() {
 
             <TextField
               fullWidth
-              label="Amount"
+              label="Opłata"
               name="amount"
               type="number"
               value={values.amount}
@@ -106,7 +106,7 @@ export default observer(function SubscriptionForm() {
 
             <TextField
               fullWidth
-              label="Frequency"
+              label="Opis planu"
               name="frequency"
               value={values.frequency}
               onChange={handleChange}
@@ -117,7 +117,7 @@ export default observer(function SubscriptionForm() {
 
             <TextField
               fullWidth
-              label="Next Payment Date"
+              label="Termin następnej opłaty"
               name="nextPaymentDate"
               type="date"
               value={values.nextPaymentDate}
@@ -136,7 +136,7 @@ export default observer(function SubscriptionForm() {
               sx={{ mt: 2 }}
               disabled={subscriptionStore.submitting}
             >
-              {isEditMode ? "Update" : "Save"}
+              {isEditMode ? "Aktualizuj" : "Zapisz"}
             </Button>
           </Form>
         )}

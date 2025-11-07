@@ -13,9 +13,8 @@ export default observer(function SubscriptionCard({ subscription }: Props) {
   const navigate = useNavigate();
 
   const handleDelete = async () => {
-    if (window.confirm("Are you sure you want to delete this subscription?")) {
+    if (window.confirm("Na pewno chcesz usunąć tą subskrypcję?")) {
       await subscriptionStore.deleteSubscription(subscription.id);
-      // optionally refresh the list or navigate to /subscriptions
       navigate("/subscriptions");
     }
   };
@@ -25,13 +24,13 @@ export default observer(function SubscriptionCard({ subscription }: Props) {
       <CardContent>
         <Typography variant="h6">{subscription.name}</Typography>
         <Typography color="text.secondary">
-          Amount: ${subscription.amount.toFixed(2)}
+          Opłata: ${subscription.amount.toFixed(2)}
         </Typography>
         <Typography color="text.secondary">
-          Frequency: {subscription.frequency}
+          Opis planu: {subscription.frequency}
         </Typography>
         <Typography color="text.secondary">
-          Next Payment:{" "}
+          Termin następnej opłaty:{" "}
           {new Date(subscription.nextPaymentDate).toLocaleDateString()}
         </Typography>
 
@@ -42,7 +41,7 @@ export default observer(function SubscriptionCard({ subscription }: Props) {
             component={Link}
             to={`/subscriptions/edit/${subscription.id}`}
           >
-            Edit
+            Edytuj
           </Button>
           <Button
             size="small"
@@ -50,7 +49,7 @@ export default observer(function SubscriptionCard({ subscription }: Props) {
             color="error"
             onClick={handleDelete}
           >
-            Delete
+            Usuń
           </Button>
         </Stack>
       </CardContent>

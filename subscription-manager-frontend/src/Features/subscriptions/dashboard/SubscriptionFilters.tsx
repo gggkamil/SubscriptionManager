@@ -33,7 +33,7 @@ const SubscriptionFilters = () => {
     >
       <CardContent>
         <Typography variant="h6" gutterBottom>
-          Filters
+          Filtry
         </Typography>
 
         <Stack direction="row" spacing={2}>
@@ -42,21 +42,21 @@ const SubscriptionFilters = () => {
             color="primary"
             onClick={() => handleFilterChange("all")}
           >
-            All
+            Wszystkie
           </Button>
           <Button
             variant={activeFilter === "active" ? "contained" : "outlined"}
             color="success"
             onClick={() => handleFilterChange("active")}
           >
-            Active
+            Przyszłe
           </Button>
           <Button
             variant={activeFilter === "expired" ? "contained" : "outlined"}
             color="error"
             onClick={() => handleFilterChange("expired")}
           >
-            Expired
+            Zaległe
           </Button>
         </Stack>
       </CardContent>

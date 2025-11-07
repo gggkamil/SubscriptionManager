@@ -10,7 +10,7 @@ const SubscriptionList = observer(() => {
   if (!filteredSubscriptions.length) {
     return (
       <p style={{ textAlign: "center", color: "#777", marginTop: "1rem" }}>
-        No subscriptions found.
+        Nie znaleziono subscrypcji.
       </p>
     );
   }

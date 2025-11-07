@@ -12,9 +12,9 @@ public class Edit
         _userManager = userManager;
     }
 
-    public async Task<bool> EditProfileAsync(string email, string fullName, string? bio, string? bankAccount)
+    public async Task<bool> EditProfileAsync(string id, string fullName, string? bio, string? bankAccount)
     {
-        var user = await _userManager.FindByEmailAsync(email);
+        var user = await _userManager.FindByIdAsync(id);
         if (user == null) return false;
 
         user.FullName = fullName;

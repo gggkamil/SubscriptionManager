@@ -18,18 +18,18 @@ public class ProfilesController : ControllerBase
         _edit = edit;
     }
 
-    [HttpGet("{username}")]
-    public async Task<ActionResult<ProfileDto>> GetProfile(string username)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ProfileDto>> GetProfile(string id)
     {
-        var profile = await _details.GetProfileAsync(username);
-        if (profile == null) return NotFound();
+        var profile = await _details.GetProfileByIdAsync(id);
+        if (profile == null) return NotFound($"User with id {id} not found");
         return Ok(profile);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> EditProfile([FromBody] ProfileDto dto)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> EditProfile(string id, [FromBody] ProfileDto dto)
     {
-        var success = await _edit.EditProfileAsync(dto.Email, dto.FullName, dto.Bio, dto.BankAccountNumber);
+        var success = await _edit.EditProfileAsync(id, dto.FullName, dto.Bio, dto.BankAccountNumber);
         if (!success) return BadRequest("Profile update failed");
         return NoContent();
     }

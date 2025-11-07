@@ -6,6 +6,9 @@ import LoginForm from "../../Pages/LoginForm";
 import App from "../../App";
 import RequireAuth from "../layout/RequireAuth";
 
+// 👇 import the new ProfilePage
+import ProfilePage from "../../Features/Profiles/ProfilePage";
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -14,18 +17,19 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to="/login" /> },
       { path: "login", element: <LoginForm /> },
 
-
       {
-  element: <RequireAuth />,
-  children: [
-    { path: "subscriptions", element: <SubscriptionDashboard /> },
-    { path: "subscriptions/:id", element: <SubscriptionDetails /> },
-    { path: "subscriptions/create", element: <SubscriptionForm /> },
-    { path: "subscriptions/edit/:id", element: <SubscriptionForm /> },
-  ],
-},
+        element: <RequireAuth />,
+        children: [
+          { path: "subscriptions", element: <SubscriptionDashboard /> },
+          { path: "subscriptions/:id", element: <SubscriptionDetails /> },
+          { path: "subscriptions/create", element: <SubscriptionForm /> },
+          { path: "subscriptions/edit/:id", element: <SubscriptionForm /> },
 
-   
+     
+          { path: "profiles/:id", element: <ProfilePage /> },
+        ],
+      },
+
       {
         path: "*",
         element: <Navigate to="/subscriptions" replace />,

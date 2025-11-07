@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { Subscription } from "../models/subscription";
-
+import type { Profile } from "../models/profile";
 
 axios.defaults.baseURL = "https://localhost:7206/api";
 
@@ -44,10 +44,17 @@ const Account = {
   current: () => requests.get("/account/me"),
 };
 
+const Profiles = {
+  get: (id: string): Promise<Profile> =>
+    requests.get(`/profiles/${id}`),
+  update: (id: string, profile: Profile) =>
+    requests.put(`/profiles/${id}`, profile),
+};
 // ---- Export unified API agent ----
 const agent = {
   Account,
   Subscriptions,
+  Profiles,
 };
 
 export default agent;

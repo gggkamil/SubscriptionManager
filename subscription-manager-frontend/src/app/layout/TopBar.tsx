@@ -29,8 +29,16 @@ export default observer(function TopBar() {
         {userStore.isLoggedIn && user && (
           <Box display="flex" alignItems="center" gap={2}>
             <Typography variant="body1" sx={{ color: "white" }}>
-               {user.displayName || user.username || "User"}
+              {user.fullName || user.username || "User"}
             </Typography>
+
+            <Button
+              color="inherit"
+              component={Link}
+              to={`/profiles/${user.id}`}
+            >
+              My Profile
+            </Button>
 
             <Button
               color="inherit"

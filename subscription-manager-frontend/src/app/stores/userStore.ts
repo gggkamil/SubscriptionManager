@@ -1,9 +1,10 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import { router } from "../routes/routes";
+import type { User } from "../models/user";
 
 export default class UserStore {
-  user: any = null;
+  user: User | null = null;
   token: string | null = window.localStorage.getItem("jwt");
 
   constructor() {
@@ -24,30 +25,37 @@ export default class UserStore {
     router.navigate("/subscriptions");
   };
 
-  register = async (values: { displayName: string; username: string; email: string; password: string }) => {
+  register = async (values: {
+    displayName: string;
+    username: string;
+    email: string;
+    password: string;
+  }) => {
     const user = await agent.Account.register(values);
     runInAction(() => {
       this.user = user;
       this.token = user.token;
       window.localStorage.setItem("jwt", user.token);
     });
-    router.navigate("/subscriptions"); 
+    router.navigate("/subscriptions");
   };
 
   logout = () => {
     this.user = null;
     this.token = null;
     window.localStorage.removeItem("jwt");
-    router.navigate("/"); 
+    router.navigate("/");
   };
 
   getCurrentUser = async () => {
     try {
       const user = await agent.Account.current();
-      runInAction(() => (this.user = user));
+      runInAction(() => {
+        this.user = user;
+      });
     } catch (error) {
       console.error(error);
-      this.logout(); 
+      this.logout();
     }
   };
 }

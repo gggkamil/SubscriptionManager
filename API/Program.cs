@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
+using Application.Profiles;
 
 IdentityModelEventSource.ShowPII = true;
 
@@ -64,6 +65,12 @@ builder.Services.AddMediatR(cfg =>
 
 // Token service
 builder.Services.AddScoped<TokenService>();
+
+//Automapper
+builder.Services.AddScoped<Application.Profiles.Details>();
+builder.Services.AddScoped<Application.Profiles.Edit>();
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();

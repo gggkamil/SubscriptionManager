@@ -1,10 +1,12 @@
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import Grid from "@mui/material/Grid";
+import { Box, Typography } from "@mui/material";
 import { useStore } from "../../app/stores/store";
+import LoadingComponent from "../../app/layout/LoadingComponent";
 import ProfileHeader from "./ProfileHeader";
 import ProfileContent from "./ProfileContent";
-import LoadingComponent from "../../app/layout/LoadingComponent";
 
 const ProfilePage = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,15 +19,29 @@ const ProfilePage = () => {
 
   if (loadingProfile) return <LoadingComponent content="Loading profile..." />;
 
+  if (!profile)
+    return (
+      <Typography
+        variant="h6"
+        textAlign="center"
+        sx={{ mt: 10, color: "text.secondary" }}
+      >
+        Profile not found.
+      </Typography>
+    );
+
   return (
-    <div className="container mx-auto p-6">
-      {profile && (
-        <>
+    <Box sx={{ px: { xs: 2, sm: 4, md: 6 }, py: 6 }}>
+      <Grid container spacing={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <ProfileHeader profile={profile} />
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 8 }}>
           <ProfileContent profile={profile} />
-        </>
-      )}
-    </div>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

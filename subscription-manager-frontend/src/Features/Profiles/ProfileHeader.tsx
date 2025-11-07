@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, Typography } from "@mui/material";
+import { Card, CardContent, Avatar, Typography,  Divider } from "@mui/material";
 import type { Profile } from "../../app/models/profile";
 
 interface Props {
@@ -7,16 +7,43 @@ interface Props {
 
 const ProfileHeader = ({ profile }: Props) => {
   return (
-    <Card className="p-6 mb-6 text-center">
+    <Card sx={{ textAlign: "center", boxShadow: 3, borderRadius: 3 }}>
       <CardContent>
-        <h2 className="text-2xl font-bold mb-2">{profile.fullName}</h2>
-        <p className="text-gray-600">{profile.email}</p>
-        <p className="text-sm text-gray-500">
-          Bank Account: {profile.bankAccountNumber ?? "Not connected"}
-        </p>
-        <p className="italic text-gray-700 mt-2">
-          {profile.bio ?? "No bio yet"}
-        </p>
+        <Avatar
+          sx={{
+            width: 100,
+            height: 100,
+            margin: "0 auto",
+            mb: 2,
+            bgcolor: "primary.main",
+            fontSize: 40,
+          }}
+        >
+          {profile.fullName?.[0]?.toUpperCase() || "U"}
+        </Avatar>
+
+        <Typography variant="h6" fontWeight="bold">
+          {profile.fullName}
+        </Typography>
+
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {profile.email}
+        </Typography>
+
+        <Divider sx={{ my: 2 }} />
+
+        <Typography variant="body1" color="text.secondary">
+          {profile.bio || "This user hasn’t added a bio yet."}
+        </Typography>
+
+        {profile.bankAccountNumber && (
+          <Typography
+            variant="body2"
+            sx={{ mt: 2, color: "text.secondary", fontStyle: "italic" }}
+          >
+            Bank Account: {profile.bankAccountNumber}
+          </Typography>
+        )}
       </CardContent>
     </Card>
   );

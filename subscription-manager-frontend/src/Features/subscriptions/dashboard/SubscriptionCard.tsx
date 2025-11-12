@@ -13,28 +13,48 @@ export default observer(function SubscriptionCard({ subscription }: Props) {
   const navigate = useNavigate();
 
   const handleDelete = async () => {
-    if (window.confirm("Na pewno chcesz usunąć tą subskrypcję?")) {
+    if (window.confirm("Na pewno chcesz usunąć tę subskrypcję?")) {
       await subscriptionStore.deleteSubscription(subscription.id);
       navigate("/subscriptions");
     }
   };
 
   return (
-    <Card variant="outlined" sx={{ borderRadius: 3 }}>
+    <Card
+      variant="outlined"
+      sx={{
+        borderRadius: 3,
+        transition: "0.2s",
+        "&:hover": { boxShadow: 4, transform: "scale(1.01)" },
+      }}
+    >
       <CardContent>
-        <Typography variant="h6">{subscription.name}</Typography>
-        <Typography color="text.secondary">
-          Opłata: ${subscription.amount.toFixed(2)}
-        </Typography>
-        <Typography color="text.secondary">
-          Opis planu: {subscription.frequency}
-        </Typography>
-        <Typography color="text.secondary">
-          Termin następnej opłaty:{" "}
-          {new Date(subscription.nextPaymentDate).toLocaleDateString()}
+        <Typography variant="h6" fontWeight="bold" gutterBottom>
+          {subscription.name}
         </Typography>
 
-        <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+        <Typography color="text.secondary">
+           Opłata: {subscription.amount.toFixed(2)} zł
+        </Typography>
+        <Typography color="text.secondary">
+           Opis planu: {subscription.frequency}
+        </Typography>
+        <Typography color="text.secondary">
+          Następna płatność:{" "}
+          {new Date(subscription.nextPaymentDate).toLocaleDateString("pl-PL")}
+        </Typography>
+
+        <Stack direction="row" spacing={1.5} sx={{ mt: 2 }}>
+          <Button
+            size="small"
+            variant="contained"
+            color="primary"
+            component={Link}
+            to={`/subscriptions/${subscription.id}`}
+          >
+            Szczegóły
+          </Button>
+
           <Button
             size="small"
             variant="outlined"
@@ -43,9 +63,10 @@ export default observer(function SubscriptionCard({ subscription }: Props) {
           >
             Edytuj
           </Button>
+
           <Button
             size="small"
-            variant="contained"
+            variant="outlined"
             color="error"
             onClick={handleDelete}
           >

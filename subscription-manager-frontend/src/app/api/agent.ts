@@ -29,6 +29,9 @@ const Subscriptions = {
   update: (subscription: Subscription) =>
     requests.put(`/subscriptions/${subscription.id}`, subscription),
   delete: (id: string) => requests.del(`/subscriptions/${id}`),
+  join: (id: string) => requests.post(`/subscriptions/${id}/join`, {}),
+leave: (id: string) => requests.post(`/subscriptions/${id}/leave`, {}),
+
 };
 
 

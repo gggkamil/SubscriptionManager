@@ -10,15 +10,26 @@ import {
   Divider,
   CircularProgress,
   Grid,
+  Avatar,
+  Stack
 } from "@mui/material";
 import SubscriptionDetailedSidebar from "./SubscriptionDetailedSidebar";
 
 const SubscriptionDetails = observer(() => {
-  const { subscriptionStore } = useStore();
+  const { subscriptionStore, userStore } = useStore();
   const { id } = useParams();
   const navigate = useNavigate();
 
   const subscription = subscriptionStore.getSubscription(id!);
+
+  if (!subscription)
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+        <CircularProgress />
+      </Box>
+    );
+
+  const isHost = subscription.appUserId === userStore.user?.id;
 
   if (!subscription)
     return (
@@ -65,7 +76,10 @@ const SubscriptionDetails = observer(() => {
 
               <Typography variant="body1" sx={{ mb: 1.5 }}>
                 <strong>Ilość osób:</strong>{" "}
-                {subscription.maxContributors || "Brak maksymalnej ilości osób"}
+                {subscription.maxContributors > 0
+                  ? subscription.maxContributors
+                  : "Brak maksymalnej liczby osób"}
+
               </Typography>
 
               <Typography variant="body1" sx={{ mb: 3 }}>
@@ -74,6 +88,66 @@ const SubscriptionDetails = observer(() => {
                   "pl-PL"
                 )}
               </Typography>
+              <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
+                Uczestnicy
+              </Typography>
+
+              {subscription.contributors.length === 0 && (
+                <Typography color="text.secondary">Brak uczestników</Typography>
+              )}
+
+              <Stack spacing={1} sx={{ mb: 2 }}>
+                {subscription.contributors.map((u) => (
+                  <Box
+                    key={u.id}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      p: 1,
+                      borderRadius: 2,
+                      bgcolor: "#f5f5f5",
+                    }}
+                  >
+                    <Avatar>{u.fullName?.[0]?.toUpperCase()}</Avatar>
+                    <Box>
+                      <Typography fontWeight="bold">{u.fullName}</Typography>
+                      <Typography variant="body2" color="text.secondary">{u.email}</Typography>
+                    </Box>
+                  </Box>
+                ))}
+              </Stack>
+
+              {(() => {
+                const { userStore } = useStore();
+                const { user } = userStore;
+
+
+                const isContributor = subscription.contributors.some(c => c.id === user?.id);
+
+                const isFull =
+                  subscription.contributors.length >= subscription.maxContributors;
+
+                return (
+                  <Button
+                    variant="contained"
+                    color={isContributor ? "warning" : "success"}
+                    sx={{ mb: 2 }}
+                    disabled={!isContributor && isFull}
+                    onClick={() =>
+                      isContributor
+                        ? subscriptionStore.leaveSubscription(subscription.id)
+                        : subscriptionStore.joinSubscription(subscription.id)
+                    }
+                  >
+                    {isContributor
+                      ? "Opuść subskrypcję"
+                      : isFull
+                        ? "Brak miejsc"
+                        : "Dołącz"}
+                  </Button>
+                );
+              })()}
 
               <Box display="flex" gap={2} mt={2}>
                 <Button
@@ -81,6 +155,7 @@ const SubscriptionDetails = observer(() => {
                   to={`/subscriptions/edit/${subscription.id}`}
                   variant="contained"
                   color="primary"
+                  disabled={!isHost}
                 >
                   Edytuj
                 </Button>
@@ -89,6 +164,7 @@ const SubscriptionDetails = observer(() => {
                   variant="outlined"
                   color="error"
                   onClick={handleDelete}
+                  disabled={!isHost}
                 >
                   Usuń
                 </Button>

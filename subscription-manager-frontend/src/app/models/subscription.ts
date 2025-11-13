@@ -8,4 +8,5 @@ export interface Subscription {
   maxContributors: number;
   nextPaymentDate: string; 
   appUser?: Profile;
+  contributors: Profile[]; 
 }

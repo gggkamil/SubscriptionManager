@@ -1,4 +1,4 @@
-import { Card, CardContent, Typography, Button, Stack } from "@mui/material";
+import { Card, CardContent, Typography, Button, Stack, Box, CircularProgress } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
@@ -9,8 +9,18 @@ interface Props {
 }
 
 export default observer(function SubscriptionCard({ subscription }: Props) {
-  const { subscriptionStore } = useStore();
+  const { subscriptionStore, userStore } = useStore();
   const navigate = useNavigate();
+
+
+  if (!subscription)
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+        <CircularProgress />
+      </Box>
+    );
+
+  const isHost = subscription.appUserId === userStore.user?.id;
 
   const handleDelete = async () => {
     if (window.confirm("Na pewno chcesz usunąć tę subskrypcję?")) {
@@ -34,10 +44,10 @@ export default observer(function SubscriptionCard({ subscription }: Props) {
         </Typography>
 
         <Typography color="text.secondary">
-           Opłata: {subscription.amount.toFixed(2)} zł
+          Opłata: {subscription.amount.toFixed(2)} zł
         </Typography>
         <Typography color="text.secondary">
-           Ilość osób: {subscription.maxContributors}
+          Ilość osób: {subscription.maxContributors}
         </Typography>
         <Typography color="text.secondary">
           Następna płatność:{" "}
@@ -60,6 +70,7 @@ export default observer(function SubscriptionCard({ subscription }: Props) {
             variant="outlined"
             component={Link}
             to={`/subscriptions/edit/${subscription.id}`}
+            disabled={!isHost}
           >
             Edytuj
           </Button>
@@ -69,6 +80,7 @@ export default observer(function SubscriptionCard({ subscription }: Props) {
             variant="outlined"
             color="error"
             onClick={handleDelete}
+            disabled={!isHost}
           >
             Usuń
           </Button>

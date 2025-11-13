@@ -103,4 +103,22 @@ export default class SubscriptionStore {
       runInAction(() => (this.submitting = false));
     }
   };
+  joinSubscription = async (subscriptionId: string) => {
+  try {
+    await agent.Subscriptions.join(subscriptionId);
+    await this.loadSubscriptions();   
+  } catch (error) {
+    console.error("Join failed", error);
+  }
+}
+
+leaveSubscription = async (subscriptionId: string) => {
+  try {
+    await agent.Subscriptions.leave(subscriptionId);
+    await this.loadSubscriptions();
+  } catch (error) {
+    console.error("Leave failed", error);
+  }
+}
+
 }

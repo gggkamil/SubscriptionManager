@@ -14,7 +14,7 @@ export default function SubscriptionDetailedInfo({ subscription }: Props) {
         </Typography>
         <Divider sx={{ mb: 2 }} />
         <Typography>
-          <strong>Opis planu:</strong> {subscription.frequency || "Brak opisu"}
+          <strong>Ilość osób:</strong> {subscription.maxContributors || "Brak maksymalnej ilości osób"}
         </Typography>
         <Typography>
           <strong>Kwota:</strong> {subscription.amount.toFixed(2)} zł

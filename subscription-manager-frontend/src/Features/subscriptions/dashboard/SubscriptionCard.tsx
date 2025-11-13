@@ -37,7 +37,7 @@ export default observer(function SubscriptionCard({ subscription }: Props) {
            Opłata: {subscription.amount.toFixed(2)} zł
         </Typography>
         <Typography color="text.secondary">
-           Opis planu: {subscription.frequency}
+           Ilość osób: {subscription.maxContributors}
         </Typography>
         <Typography color="text.secondary">
           Następna płatność:{" "}

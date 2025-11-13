@@ -29,7 +29,7 @@ namespace Application.Subscriptions
 
                 sub.Name = request.Subscription.Name;
                 sub.Amount = request.Subscription.Amount;
-                sub.Frequency = request.Subscription.Frequency;
+                sub.MaxContributors = request.Subscription.MaxContributors;
                 sub.NextPaymentDate = request.Subscription.NextPaymentDate;
 
                 var success = await _context.SaveChangesAsync(cancellationToken) > 0;

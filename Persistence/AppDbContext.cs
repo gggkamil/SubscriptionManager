@@ -13,7 +13,7 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<Notification> Notifications { get; set; }
 
-    
+    public DbSet<SubscriptionContributor> SubscriptionContributors { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

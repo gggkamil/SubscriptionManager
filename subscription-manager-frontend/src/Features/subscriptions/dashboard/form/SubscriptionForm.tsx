@@ -31,7 +31,7 @@ export default observer(function SubscriptionForm() {
     amount: Yup.number()
       .required("Opłata jest wymagana")
       .min(0, "Opłata musi być wyższa od 0"),
-    frequency: Yup.string().required("Opis planu jest wymagana"),
+    maxContributors: Yup.string().required("Maksymalna ilość osób jest wymagana"),
     nextPaymentDate: Yup.date().required("Termin następnej opłaty jest wymagany"),
   });
 
@@ -51,7 +51,7 @@ export default observer(function SubscriptionForm() {
         initialValues={{
           name: subscription?.name || "",
           amount: subscription?.amount || 0,
-          frequency: subscription?.frequency || "",
+          maxContributors: subscription?.maxContributors || "",
           nextPaymentDate: subscription?.nextPaymentDate
             ? subscription.nextPaymentDate.substring(0, 10)
             : "",
@@ -61,7 +61,7 @@ export default observer(function SubscriptionForm() {
             id: subscription?.id, 
             name: values.name,
             amount: values.amount,
-            frequency: values.frequency,
+            maxContributors: values.maxContributors,
             nextPaymentDate: new Date(values.nextPaymentDate).toISOString(),
           };
 
@@ -106,12 +106,12 @@ export default observer(function SubscriptionForm() {
 
             <TextField
               fullWidth
-              label="Opis planu"
-              name="frequency"
-              value={values.frequency}
+              label="Ilość osób"
+              name="maxContributors"
+              value={values.maxContributors}
               onChange={handleChange}
-              error={touched.frequency && !!errors.frequency}
-              helperText={touched.frequency && errors.frequency}
+              error={touched.maxContributors && !!errors.maxContributors}
+              helperText={touched.maxContributors && errors.maxContributors}
               margin="normal"
             />
 

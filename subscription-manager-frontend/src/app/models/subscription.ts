@@ -5,7 +5,7 @@ export interface Subscription {
   appUserId?: string;
   name: string;
   amount: number;
-  frequency: string;
+  maxContributors: number;
   nextPaymentDate: string; 
   appUser?: Profile;
 }

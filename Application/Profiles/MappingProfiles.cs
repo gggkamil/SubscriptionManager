@@ -12,7 +12,8 @@ namespace Application.Profiles
 
             CreateMap<Subscription, SubscriptionDto>()
                 .ForMember(dest => dest.AppUser, opt => opt.MapFrom(src => src.AppUser))
-                .ForMember(dest => dest.AppUserId, opt => opt.MapFrom(src => src.AppUserId));
+                .ForMember(dest => dest.AppUserId, opt => opt.MapFrom(src => src.AppUserId))
+                  .ForMember(dest => dest.Contributors, opt => opt.MapFrom(src => src.Contributors.Select(c => c.AppUser)));
         }
     }
 }

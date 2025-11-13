@@ -3,7 +3,7 @@ export default function SubscriptionListItem({ subscription }: { subscription: a
     <div style={{ border: "1px solid #ccc", margin: "0.5rem", padding: "1rem" }}>
       <h3>{subscription.name}</h3>
       <p>Opłata: ${subscription.amount}</p>
-      <p>Opis planu: {subscription.frequency}</p>
+      <p>Ilość osób: {subscription.maxContributors}</p>
       <p>Termin następnej opłaty: {subscription.nextPaymentDate}</p>
     </div>
   );

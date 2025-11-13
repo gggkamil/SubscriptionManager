@@ -64,8 +64,8 @@ const SubscriptionDetails = observer(() => {
               </Typography>
 
               <Typography variant="body1" sx={{ mb: 1.5 }}>
-                <strong>Opis planu:</strong>{" "}
-                {subscription.frequency || "Brak opisu"}
+                <strong>Ilość osób:</strong>{" "}
+                {subscription.maxContributors || "Brak maksymalnej ilości osób"}
               </Typography>
 
               <Typography variant="body1" sx={{ mb: 3 }}>

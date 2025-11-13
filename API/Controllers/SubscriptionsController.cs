@@ -39,5 +39,17 @@ namespace API.Controllers
         {
             return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
         }
+        [HttpPost("{id}/join")]
+        public async Task<IActionResult> Join(Guid id)
+        {
+            return HandleResult(await Mediator.Send(new Join.Command { SubscriptionId = id }));
+        }
+
+        [HttpPost("{id}/leave")]
+        public async Task<IActionResult> Leave(Guid id)
+        {
+            return HandleResult(await Mediator.Send(new Leave.Command { SubscriptionId = id }));
+        }
+
     }
 }

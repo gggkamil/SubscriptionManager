@@ -1,5 +1,5 @@
-import { Card, CardContent, Typography, Button, Stack, Box, CircularProgress } from "@mui/material";
-import { useNavigate, Link } from "react-router-dom";
+import { Card, CardContent, Typography, Button, Stack, Box, CircularProgress, Chip } from "@mui/material";
+import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
 import type { Subscription } from "../../../app/models/subscription";
@@ -9,8 +9,7 @@ interface Props {
 }
 
 export default observer(function SubscriptionCard({ subscription }: Props) {
-  const { subscriptionStore, userStore } = useStore();
-  const navigate = useNavigate();
+  const { userStore } = useStore();
 
 
   if (!subscription)
@@ -22,12 +21,7 @@ export default observer(function SubscriptionCard({ subscription }: Props) {
 
   const isHost = subscription.appUserId === userStore.user?.id;
 
-  const handleDelete = async () => {
-    if (window.confirm("Na pewno chcesz usunąć tę subskrypcję?")) {
-      await subscriptionStore.deleteSubscription(subscription.id);
-      navigate("/subscriptions");
-    }
-  };
+
 
   return (
     <Card
@@ -39,9 +33,12 @@ export default observer(function SubscriptionCard({ subscription }: Props) {
       }}
     >
       <CardContent>
-        <Typography variant="h6" fontWeight="bold" gutterBottom>
-          {subscription.name}
-        </Typography>
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Typography variant="h6" fontWeight="bold" gutterBottom>
+            {subscription.name}
+          </Typography>
+          {isHost && <Chip label="Właściciel" color="success" size="small" />}
+        </Stack>
 
         <Typography color="text.secondary">
           Opłata: {subscription.amount.toFixed(2)} zł
@@ -65,25 +62,6 @@ export default observer(function SubscriptionCard({ subscription }: Props) {
             Szczegóły
           </Button>
 
-          <Button
-            size="small"
-            variant="outlined"
-            component={Link}
-            to={`/subscriptions/edit/${subscription.id}`}
-            disabled={!isHost}
-          >
-            Edytuj
-          </Button>
-
-          <Button
-            size="small"
-            variant="outlined"
-            color="error"
-            onClick={handleDelete}
-            disabled={!isHost}
-          >
-            Usuń
-          </Button>
         </Stack>
       </CardContent>
     </Card>

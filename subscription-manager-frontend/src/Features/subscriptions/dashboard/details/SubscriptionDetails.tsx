@@ -150,24 +150,26 @@ const SubscriptionDetails = observer(() => {
               })()}
 
               <Box display="flex" gap={2} mt={2}>
-                <Button
-                  component={Link}
-                  to={`/subscriptions/edit/${subscription.id}`}
-                  variant="contained"
-                  color="primary"
-                  disabled={!isHost}
-                >
-                  Edytuj
-                </Button>
+                {isHost && (
+                  <>
+                    <Button
+                      component={Link}
+                      to={`/subscriptions/edit/${subscription.id}`}
+                      variant="contained"
+                      color="primary"
+                    >
+                      Edytuj
+                    </Button>
 
-                <Button
-                  variant="outlined"
-                  color="error"
-                  onClick={handleDelete}
-                  disabled={!isHost}
-                >
-                  Usuń
-                </Button>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={handleDelete}
+                    >
+                      Usuń
+                    </Button>
+                  </>
+                )}
 
                 <Button
                   component={Link}

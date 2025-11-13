@@ -4,7 +4,6 @@ import {
   Typography,
   Avatar,
   Box,
-  Chip,
   Divider,
 } from "@mui/material";
 import type { Subscription } from "../../../../app/models/subscription";
@@ -54,17 +53,7 @@ export default function SubscriptionDetailedSidebar({ subscription }: Props) {
               {user.fullName?.[0]?.toUpperCase() ?? "?"}
             </Avatar>
 
-            <Chip
-              label="Host"
-              color="warning"
-              size="small"
-              sx={{
-                position: "absolute",
-                top: 5,
-                right: -10,
-                fontWeight: "bold",
-              }}
-            />
+
           </Box>
 
           <Typography variant="h6" fontWeight="bold" textAlign="center">

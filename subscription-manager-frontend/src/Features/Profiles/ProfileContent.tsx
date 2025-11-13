@@ -1,8 +1,10 @@
 import { observer } from "mobx-react-lite";
-import { Tabs, Tab, Box } from "@mui/material";
-import { useState } from "react";
+import { Tabs, Tab, Box, Typography, Grid } from "@mui/material";
+import { useState, useEffect } from "react";
 import type { Profile } from "../../app/models/profile";
+import { useStore } from "../../app/stores/store";
 import ProfileEditForm from "./ProfileEditForm";
+import SubscriptionCard from "../subscriptions/dashboard/SubscriptionCard";
 
 interface Props {
   profile: Profile;
@@ -10,26 +12,24 @@ interface Props {
 
 const ProfileContent = ({ profile }: Props) => {
   const [tab, setTab] = useState(0);
+  const { subscriptionStore } = useStore();
+  const { subscriptions, loadSubscriptions, loadingInitial } = subscriptionStore;
 
-  const handleChange = (_: React.SyntheticEvent, newValue: number) => {
-    setTab(newValue);
-  };
+  useEffect(() => {
+    if (subscriptions.length === 0) loadSubscriptions();
+  }, [subscriptions.length, loadSubscriptions]);
+
+  const userSubscriptions = subscriptions.filter(s => s.appUserId === profile.id);
+
+  const handleChange = (_: React.SyntheticEvent, newValue: number) => setTab(newValue);
 
   return (
     <Box sx={{ width: "100%", bgcolor: "background.paper", boxShadow: 1, borderRadius: 2 }}>
-      <Tabs
-        value={tab}
-        onChange={handleChange}
-        variant="scrollable"
-        scrollButtons="auto"
-        textColor="primary"
-        indicatorColor="primary"
-        sx={{ borderBottom: 1, borderColor: "divider" }}
-      >
-        <Tab label="About" />
-        <Tab label="Edit Profile" />
-        <Tab label="Subscriptions" />
-        <Tab label="Activity" />
+      <Tabs value={tab} onChange={handleChange}>
+        <Tab label="Opis" />
+        <Tab label="Edytuj profil" />
+        <Tab label="Jestem właścicielem" />
+        <Tab label="Należe do" />
       </Tabs>
 
       <Box sx={{ p: 3 }}>
@@ -37,19 +37,32 @@ const ProfileContent = ({ profile }: Props) => {
           <Box>
             <p><strong>Imię i nazwisko:</strong> {profile.fullName}</p>
             <p><strong>Email:</strong> {profile.email}</p>
-            <p><strong>Bio:</strong> {profile.bio || "No bio yet."}</p>
+            <p><strong>Bio:</strong> {profile.bio || "Brak opisu."}</p>
           </Box>
         )}
+
         {tab === 1 && <ProfileEditForm profile={profile} />}
+
         {tab === 2 && (
-          <p style={{ color: "#777" }}>
-            Zakładka subskrypcji (do podłączenia później do listy subscrypcji)
-          </p>
+          <Box>
+            {loadingInitial ? (
+              <Typography color="text.secondary">Ładowanie subskrypcji...</Typography>
+            ) : userSubscriptions.length === 0 ? (
+              <Typography color="text.secondary">Ten użytkownik nie ma jeszcze żadnych subskrypcji.</Typography>
+            ) : (
+              <Grid container spacing={2}>
+                {userSubscriptions.map(sub => (
+                  <Grid key={sub.id} >
+                    <SubscriptionCard subscription={sub} />
+                  </Grid>
+                ))}
+              </Grid>
+            )}
+          </Box>
         )}
+
         {tab === 3 && (
-          <p style={{ color: "#777" }}>
-            Zakładka aktywności w budowie
-          </p>
+          <Typography color="text.secondary">Zakładka aktywności w budowie</Typography>
         )}
       </Box>
     </Box>

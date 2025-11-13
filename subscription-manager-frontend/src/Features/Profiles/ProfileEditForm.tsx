@@ -81,7 +81,7 @@ const ProfileEditForm = ({ profile }: Props) => {
                 }}
                 disabled={updatingProfile}
               >
-                {updatingProfile ? "Zapisywanie..." : "Zapisano zmiany"}
+                {updatingProfile ? "Zapisywanie..." : "Zapisz"}
               </Button>
             </Stack>
           </Form>

@@ -11,5 +11,6 @@ namespace Application.Subscriptions
         public DateTime NextPaymentDate { get; set; }
 
         public ProfileDto? AppUser { get; set; }
+         public string? AppUserId { get; set; }
     }
 }

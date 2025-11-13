@@ -62,8 +62,28 @@ const ProfileContent = ({ profile }: Props) => {
         )}
 
         {tab === 3 && (
-          <Typography color="text.secondary">Zakładka aktywności w budowie</Typography>
-        )}
+  <Box>
+    {loadingInitial ? (
+      <Typography color="text.secondary">Ładowanie subskrypcji...</Typography>
+    ) : subscriptions.filter(s => 
+      s.contributors.some(c => c.id === profile.id)
+    ).length === 0 ? (
+      <Typography color="text.secondary">
+        Ten użytkownik nie należy do żadnej subskrypcji.
+      </Typography>
+    ) : (
+      <Grid container spacing={2}>
+        {subscriptions
+          .filter(s => s.contributors.some(c => c.id === profile.id))
+          .map(sub => (
+            <Grid key={sub.id} >
+              <SubscriptionCard subscription={sub} />
+            </Grid>
+          ))}
+      </Grid>
+    )}
+  </Box>
+)}
       </Box>
     </Box>
   );

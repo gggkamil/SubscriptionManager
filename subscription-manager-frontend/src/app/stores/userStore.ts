@@ -25,20 +25,15 @@ export default class UserStore {
     router.navigate("/subscriptions");
   };
 
-  register = async (values: {
-    displayName: string;
-    username: string;
-    email: string;
-    password: string;
-  }) => {
-    const user = await agent.Account.register(values);
-    runInAction(() => {
-      this.user = user;
-      this.token = user.token;
-      window.localStorage.setItem("jwt", user.token);
-    });
-    router.navigate("/subscriptions");
-  };
+register = async (values: { fullName: string; email: string; password: string }) => {
+  const user = await agent.Account.register(values);
+  runInAction(() => {
+    this.user = user;
+    this.token = user.token;
+    window.localStorage.setItem("jwt", user.token);
+  });
+  router.navigate("/subscriptions");
+};
 
   logout = () => {
     this.user = null;

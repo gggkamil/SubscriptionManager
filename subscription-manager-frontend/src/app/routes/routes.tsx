@@ -8,6 +8,7 @@ import RequireAuth from "../layout/RequireAuth";
 
 
 import ProfilePage from "../../Features/Profiles/ProfilePage";
+import RegisterForm from "../../Pages/RegisterForm";
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/login" /> },
       { path: "login", element: <LoginForm /> },
+      { path: "register", element: <RegisterForm /> },
 
       {
         element: <RequireAuth />,

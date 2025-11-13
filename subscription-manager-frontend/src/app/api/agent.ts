@@ -38,12 +38,8 @@ leave: (id: string) => requests.post(`/subscriptions/${id}/leave`, {}),
 const Account = {
   login: (credentials: { email: string; password: string }) =>
     requests.post("/account/login", credentials),
-  register: (values: {
-    displayName: string;
-    username: string;
-    email: string;
-    password: string;
-  }) => requests.post("/account/register", values),
+  register: (values: { fullName: string; email: string; password: string }) =>
+    requests.post("/account/register", values),
   current: () => requests.get("/account/me"),
 };
 

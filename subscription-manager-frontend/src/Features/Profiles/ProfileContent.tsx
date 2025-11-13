@@ -76,7 +76,7 @@ const ProfileContent = ({ profile }: Props) => {
         {subscriptions
           .filter(s => s.contributors.some(c => c.id === profile.id))
           .map(sub => (
-            <Grid key={sub.id} >
+            <Grid key={sub.id} size={{ xs: 12, sm: 6, md: 4 }}>
               <SubscriptionCard subscription={sub} />
             </Grid>
           ))}

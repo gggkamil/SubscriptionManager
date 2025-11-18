@@ -28,7 +28,7 @@ namespace Application.Subscriptions
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                // ✅ Get current user ID from claims
+            
                 var userId = (_httpContextAccessor.HttpContext?.User as ClaimsPrincipal)?
                     .FindFirstValue(ClaimTypes.NameIdentifier);
 

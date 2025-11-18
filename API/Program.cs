@@ -89,7 +89,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-// -------------------- App Pipeline --------------------
 
 var app = builder.Build();
 

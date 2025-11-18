@@ -31,7 +31,7 @@ namespace Application.Subscriptions
                 var userId = _httpContext.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (userId == null) return Result<Unit>.Failure("No logged-in user found");
 
-                request.Subscription.Id = Guid.NewGuid(); // optional if not set
+                request.Subscription.Id = Guid.NewGuid(); 
                 request.Subscription.AppUserId = userId;
 
                 _context.Subscriptions.Add(request.Subscription);

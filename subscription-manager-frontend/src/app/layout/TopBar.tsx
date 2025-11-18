@@ -37,7 +37,7 @@ export default observer(function TopBar() {
               component={Link}
               to={`/profiles/${user.id}`}
             >
-              My Profile
+              Mój profil
             </Button>
 
             <Button
@@ -46,11 +46,11 @@ export default observer(function TopBar() {
               to="/subscriptions/create"
               sx={{ mr: 1 }}
             >
-              Add Subscription
+              Dodaj subscrypcję
             </Button>
 
             <Button color="inherit" onClick={handleLogout}>
-              Logout
+              Wyloguj
             </Button>
           </Box>
         )}

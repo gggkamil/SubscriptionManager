@@ -19,7 +19,7 @@ const SubscriptionDetails = observer(() => {
   const { subscriptionStore, userStore } = useStore();
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const { user } = userStore;
   const subscription = subscriptionStore.getSubscription(id!);
 
   if (!subscription)
@@ -30,7 +30,7 @@ const SubscriptionDetails = observer(() => {
     );
 
   const isHost = subscription.appUserId === userStore.user?.id;
-
+  const isContributor = subscription.contributors.some(c => c.id === user?.id);
   if (!subscription)
     return (
       <Box
@@ -179,6 +179,15 @@ const SubscriptionDetails = observer(() => {
                 >
                   Wróć
                 </Button>
+                {isContributor && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => subscriptionStore.pay(subscription.id)}
+                  >
+                    Zapłaciłem ({subscription.amount} zł)
+                  </Button>
+                )}
               </Box>
             </CardContent>
           </Card>

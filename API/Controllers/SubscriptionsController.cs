@@ -50,6 +50,12 @@ namespace API.Controllers
         {
             return HandleResult(await Mediator.Send(new Leave.Command { SubscriptionId = id }));
         }
+        [HttpPost("{id}/pay")]
+        public async Task<IActionResult> Pay(Guid id)
+        {
+            return HandleResult(await Mediator.Send(new Pay.Command(id)));
+        }
+
 
     }
 }

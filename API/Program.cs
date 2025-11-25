@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using Application.Profiles;
+using Application.Interfaces;
 
 IdentityModelEventSource.ShowPII = true;
 
@@ -89,8 +90,10 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IUserAccessor, UserAccessor>(); 
 
-var app = builder.Build();
+var app = builder.Build(); 
 
 if (app.Environment.IsDevelopment())
 {

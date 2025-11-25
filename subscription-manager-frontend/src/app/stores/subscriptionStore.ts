@@ -120,5 +120,12 @@ leaveSubscription = async (subscriptionId: string) => {
     console.error("Leave failed", error);
   }
 }
+pay = async (subscriptionId: string) => {
+    await agent.Subscriptions.pay(subscriptionId);
+    toast.success("Payment added!");
+
+    await this.loadSubscriptions(); 
+};
+
 
 }

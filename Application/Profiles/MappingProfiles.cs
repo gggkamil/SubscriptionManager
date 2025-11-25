@@ -1,4 +1,5 @@
 using Application.Subscriptions;
+using Application.Transactions;
 using AutoMapper;
 using Domain.Entities;
 
@@ -14,6 +15,8 @@ namespace Application.Profiles
                 .ForMember(dest => dest.AppUser, opt => opt.MapFrom(src => src.AppUser))
                 .ForMember(dest => dest.AppUserId, opt => opt.MapFrom(src => src.AppUserId))
                   .ForMember(dest => dest.Contributors, opt => opt.MapFrom(src => src.Contributors.Select(c => c.AppUser)));
+
+            CreateMap<Transaction, TransactionDto>();
         }
     }
 }

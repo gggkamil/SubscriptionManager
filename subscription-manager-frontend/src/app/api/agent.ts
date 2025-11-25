@@ -30,7 +30,8 @@ const Subscriptions = {
     requests.put(`/subscriptions/${subscription.id}`, subscription),
   delete: (id: string) => requests.del(`/subscriptions/${id}`),
   join: (id: string) => requests.post(`/subscriptions/${id}/join`, {}),
-leave: (id: string) => requests.post(`/subscriptions/${id}/leave`, {}),
+  leave: (id: string) => requests.post(`/subscriptions/${id}/leave`, {}),
+  pay: (id: string) => requests.post(`/subscriptions/${id}/pay`, {})
 
 };
 

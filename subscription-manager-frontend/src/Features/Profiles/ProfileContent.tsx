@@ -29,7 +29,7 @@ const ProfileContent = ({ profile }: Props) => {
   const { subscriptionStore } = useStore();
   const { subscriptions, loadSubscriptions, loadingInitial } = subscriptionStore;
 
-  // NEW STATE FOR USER TRANSACTIONS
+  
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
 
@@ -44,7 +44,7 @@ const ProfileContent = ({ profile }: Props) => {
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
 
-    // Load transactions ONLY when opening the "Transakcje" tab
+
     if (newValue === 4) {
       loadUserTransactions();
     }
@@ -84,10 +84,10 @@ const ProfileContent = ({ profile }: Props) => {
           </Box>
         )}
 
-        {/* TAB 1 — EDIT */}
+      
         {tab === 1 && <ProfileEditForm profile={profile} />}
 
-        {/* TAB 2 — USER'S OWN SUBSCRIPTIONS */}
+     
         {tab === 2 && (
           <Box>
             {loadingInitial ? (
@@ -108,7 +108,7 @@ const ProfileContent = ({ profile }: Props) => {
           </Box>
         )}
 
-        {/* TAB 3 — SUBSCRIPTIONS THE USER JOINS */}
+        
         {tab === 3 && (
           <Box>
             {loadingInitial ? (
@@ -145,6 +145,7 @@ const ProfileContent = ({ profile }: Props) => {
                 <Table>
                   <TableHead>
                     <TableRow>
+                      <TableCell><strong>Nazwa</strong></TableCell>
                       <TableCell><strong>Data</strong></TableCell>
                       <TableCell><strong>Kwota</strong></TableCell>
                       <TableCell><strong>ID Subskrypcji</strong></TableCell>
@@ -153,6 +154,7 @@ const ProfileContent = ({ profile }: Props) => {
                   <TableBody>
                     {transactions.map((t) => (
                       <TableRow key={t.id}>
+                        <TableCell>{t.merchant || "—"}</TableCell>
                         <TableCell>{new Date(t.date).toLocaleDateString("pl-PL")}</TableCell>
                         <TableCell>{t.amount} zł</TableCell>
                         <TableCell>{t.subscriptionId}</TableCell>

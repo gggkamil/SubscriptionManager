@@ -7,5 +7,8 @@ namespace Application.Transactions
         public DateTime Date { get; set; }
         public Guid SubscriptionId { get; set; }
         public string AppUserId { get; set; } = null!;
+
+        public string Merchant { get; set; } = "";
+
     }
 }

@@ -38,7 +38,8 @@ namespace Application.Subscriptions
                     AppUserId = userId,
                     SubscriptionId = subscription.Id,
                     Amount = subscription.Amount,
-                    Date = DateTime.UtcNow
+                    Date = DateTime.UtcNow,
+                    Merchant = subscription.Name
                 };
 
                 _context.Transactions.Add(transaction);

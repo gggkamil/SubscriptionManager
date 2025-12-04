@@ -4,4 +4,5 @@ export interface Transaction {
   date: string;
   subscriptionId: string;
   appUserId: string;
+  merchant: string; 
 }

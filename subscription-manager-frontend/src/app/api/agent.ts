@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { Subscription } from "../models/subscription";
 import type { Profile } from "../models/profile";
+import type { Transaction } from "../models/transaction";
 
 axios.defaults.baseURL = "https://localhost:7206/api";
 
@@ -15,7 +16,8 @@ axios.interceptors.request.use(config => {
 const responseBody = (response: any) => response.data;
 
 const requests = {
-  get: (url: string) => axios.get(url).then(responseBody),
+ get: <T>(url: string) => axios.get<T>(url).then(responseBody),
+
   post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
   put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
   del: (url: string) => axios.delete(url).then(responseBody),
@@ -35,6 +37,9 @@ const Subscriptions = {
 
 };
 
+const Transactions = {
+    listMine: () => requests.get<Transaction[]>('/transactions/mine')
+};
 
 const Account = {
   login: (credentials: { email: string; password: string }) =>
@@ -55,6 +60,7 @@ const agent = {
   Account,
   Subscriptions,
   Profiles,
+  Transactions
 };
 
 export default agent;

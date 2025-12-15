@@ -13,6 +13,9 @@ import {
   Avatar,
   Stack
 } from "@mui/material";
+import { useEffect, useState } from "react";
+import agent from "../../../../app/api/agent";
+import type { Transaction } from "../../../../app/models/transaction";
 import SubscriptionDetailedSidebar from "./SubscriptionDetailedSidebar";
 
 const SubscriptionDetails = observer(() => {
@@ -21,6 +24,13 @@ const SubscriptionDetails = observer(() => {
   const navigate = useNavigate();
   const { user } = userStore;
   const subscription = subscriptionStore.getSubscription(id!);
+
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+
+  useEffect(() => {
+    agent.Transactions.listMine().then(setTransactions);
+  }, []);
 
   if (!subscription)
     return (
@@ -31,17 +41,6 @@ const SubscriptionDetails = observer(() => {
 
   const isHost = subscription.appUserId === userStore.user?.id;
   const isContributor = subscription.contributors.some(c => c.id === user?.id);
-  if (!subscription)
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="60vh"
-      >
-        <CircularProgress />
-      </Box>
-    );
 
   const handleDelete = async () => {
     if (window.confirm("Na pewno usunąć tę subskrypcję?")) {
@@ -49,6 +48,31 @@ const SubscriptionDetails = observer(() => {
       navigate("/subscriptions");
     }
   };
+
+const nextPayment = new Date(subscription.nextPaymentDate);
+
+const lastCycleStart = new Date(nextPayment);
+lastCycleStart.setMonth(lastCycleStart.getMonth() - 1);
+
+const contributorsPaid = subscription.contributors.map(c => {
+  const payments = transactions
+    .filter(
+      t =>
+        t.appUserId === c.id &&
+        t.subscriptionId === subscription.id
+    )
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  const latest = payments[0];
+  if (!latest) return { userId: c.id, paid: false };
+
+  const paid =
+    new Date(latest.date) >= lastCycleStart &&
+    new Date(latest.date) < nextPayment;
+
+  return { userId: c.id, paid };
+});
+
 
   return (
     <Box sx={{ flexGrow: 1, mt: 4, px: 2 }}>
@@ -60,7 +84,7 @@ const SubscriptionDetails = observer(() => {
               boxShadow: 4,
               p: 2,
               maxWidth: 700,
-              mx: "auto",
+              mx: "auto"
             }}
           >
             <CardContent>
@@ -79,15 +103,13 @@ const SubscriptionDetails = observer(() => {
                 {subscription.maxContributors > 0
                   ? subscription.maxContributors
                   : "Brak maksymalnej liczby osób"}
-
               </Typography>
 
               <Typography variant="body1" sx={{ mb: 3 }}>
                 <strong>Termin następnej opłaty:</strong>{" "}
-                {new Date(subscription.nextPaymentDate).toLocaleDateString(
-                  "pl-PL"
-                )}
+                {new Date(subscription.nextPaymentDate).toLocaleDateString("pl-PL")}
               </Typography>
+
               <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
                 Uczestnicy
               </Typography>
@@ -96,37 +118,40 @@ const SubscriptionDetails = observer(() => {
                 <Typography color="text.secondary">Brak uczestników</Typography>
               )}
 
+
               <Stack spacing={1} sx={{ mb: 2 }}>
-                {subscription.contributors.map((u) => (
-                  <Box
-                    key={u.id}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      p: 1,
-                      borderRadius: 2,
-                      bgcolor: "#f5f5f5",
-                    }}
-                  >
-                    <Avatar>{u.fullName?.[0]?.toUpperCase()}</Avatar>
-                    <Box>
-                      <Typography fontWeight="bold">{u.fullName}</Typography>
-                      <Typography variant="body2" color="text.secondary">{u.email}</Typography>
+                {subscription.contributors.map(u => {
+                  const paid = contributorsPaid.find(x => x.userId === u.id)?.paid;
+
+                  return (
+                    <Box
+                      key={u.id}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        p: 1,
+                        borderRadius: 2,
+                        bgcolor: paid ? "#d4edda" : "#f5f5f5",
+                        border: paid ? "2px solid #28a745" : "1px solid transparent"
+                      }}
+                    >
+                      <Avatar>{u.fullName?.[0]?.toUpperCase()}</Avatar>
+                      <Box>
+                        <Typography fontWeight="bold">{u.fullName}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {u.email}
+                        </Typography>
+                      </Box>
                     </Box>
-                  </Box>
-                ))}
+                  );
+                })}
               </Stack>
 
               {(() => {
-                const { userStore } = useStore();
-                const { user } = userStore;
-
-
                 const isContributor = subscription.contributors.some(c => c.id === user?.id);
 
-                const isFull =
-                  subscription.contributors.length >= subscription.maxContributors;
+                const isFull = subscription.contributors.length >= subscription.maxContributors;
 
                 return (
                   <Button
@@ -161,24 +186,16 @@ const SubscriptionDetails = observer(() => {
                       Edytuj
                     </Button>
 
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={handleDelete}
-                    >
+                    <Button variant="outlined" color="error" onClick={handleDelete}>
                       Usuń
                     </Button>
                   </>
                 )}
 
-                <Button
-                  component={Link}
-                  to="/subscriptions"
-                  variant="text"
-                  color="inherit"
-                >
+                <Button component={Link} to="/subscriptions" variant="text" color="inherit">
                   Wróć
                 </Button>
+
                 {isContributor && (
                   <Button
                     variant="contained"

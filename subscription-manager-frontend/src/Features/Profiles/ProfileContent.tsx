@@ -71,11 +71,10 @@ const ProfileContent = ({ profile }: Props) => {
         <Tab label="Edytuj profil" />
         <Tab label="Jestem właścicielem" />
         <Tab label="Należe do" />
-        <Tab label="Transakcje" /> {/* NEW TAB */}
+        <Tab label="Transakcje" /> 
       </Tabs>
 
       <Box sx={{ p: 3 }}>
-        {/* TAB 0 — OPIS */}
         {tab === 0 && (
           <Box>
             <p><strong>Imię i nazwisko:</strong> {profile.fullName}</p>
@@ -133,7 +132,7 @@ const ProfileContent = ({ profile }: Props) => {
           </Box>
         )}
 
-        {/* TAB 4 — TRANSAKCJE */}
+       
         {tab === 4 && (
           <Box>
             {loadingTransactions ? (

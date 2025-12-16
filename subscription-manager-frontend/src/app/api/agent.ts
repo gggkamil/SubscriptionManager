@@ -38,7 +38,9 @@ const Subscriptions = {
 };
 
 const Transactions = {
-    listMine: () => requests.get<Transaction[]>('/transactions/mine')
+    listMine: () => requests.get<Transaction[]>('/transactions/mine'),
+  listForSubscription: (id: string) =>
+    requests.get<Transaction[]>(`/transactions/subscription/${id}`)
 };
 
 const Account = {

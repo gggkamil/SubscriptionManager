@@ -28,9 +28,14 @@ const SubscriptionDetails = observer(() => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
 
-  useEffect(() => {
-    agent.Transactions.listMine().then(setTransactions);
-  }, []);
+useEffect(() => {
+  if (subscription) {
+    agent.Transactions
+      .listForSubscription(subscription.id)
+      .then(setTransactions);
+  }
+}, [subscription]);
+
 
   if (!subscription)
     return (

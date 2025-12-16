@@ -13,5 +13,16 @@ namespace API.Controllers
         {
             return HandleResult(await Mediator.Send(new ListUserTransactions.Query()));
         }
+        [HttpGet("subscription/{subscriptionId}")]
+public async Task<IActionResult> GetSubscriptionTransactions(Guid subscriptionId)
+{
+    return HandleResult(
+        await Mediator.Send(new ListSubscriptionTransactions.Query
+        {
+            SubscriptionId = subscriptionId
+        })
+    );
+}
+
     }
 }
